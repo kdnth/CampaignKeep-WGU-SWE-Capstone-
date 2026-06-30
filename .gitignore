@@ -38,3 +38,7 @@ build/
 # Env / secrets
 .env
 *.env
+
+# HTTP
+http-client.private.env.json
+http-client.env.json

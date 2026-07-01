@@ -98,7 +98,7 @@ async function handleSubmit() {
                 type="password"
                 placeholder="Password"
                 required
-                autocomplete="password"
+                autocomplete="new-password"
                 :error="!!passwordErr"
               />
             </div>
@@ -111,7 +111,7 @@ async function handleSubmit() {
                 type="password"
                 placeholder="Password"
                 required
-                autocomplete="password"
+                autocomplete="new-password"
                 :error="!!passwordErr"
               />
             </div>

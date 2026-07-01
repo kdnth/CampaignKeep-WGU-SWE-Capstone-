@@ -74,7 +74,7 @@ async function handleSubmit() {
               type="password"
               placeholder="Password"
               required
-              autocomplete="password"
+              autocomplete="current-password"
               :error="!!passwordErr"
             />
           </div>
@@ -85,7 +85,7 @@ async function handleSubmit() {
           <!-- submit -->
           <div class="flex justify-center">
             <BaseButton type="submit" :loading="isLoading">
-              {{ isLoading ? 'Signing in...' : 'Sign In' }}
+              {{ isLoading ? 'Logging in...' : 'Login' }}
             </BaseButton>
           </div>
         </form>

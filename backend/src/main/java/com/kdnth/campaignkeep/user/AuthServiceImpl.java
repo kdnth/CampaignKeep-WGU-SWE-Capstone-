@@ -3,6 +3,7 @@ package com.kdnth.campaignkeep.user;
 import com.kdnth.campaignkeep.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.username())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new IllegalArgumentException("Username already exists. Please choose a different username.");
         }
         if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Email already exists");
@@ -38,10 +39,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.identifier(), request.password())
-        );
-
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.identifier(), request.password())
+            );
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
         User user = userRepository.findByUsername(request.identifier())
                 .or(() -> userRepository.findByEmail(request.identifier()))
                 .orElseThrow(() -> new IllegalStateException("User not found"));

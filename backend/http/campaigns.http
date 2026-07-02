@@ -1,0 +1,316 @@
+### =========================================================
+### Setup: register/login two distinct users
+### user1 will become the campaign master (creator)
+### user2 will be added as a player, used to test role checks
+### =========================================================
+
+### Register user1 (campaign creator / master)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "gm_tester",
+  "email": "gm_tester@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+    client.global.set("user1Id", response.body.userId);
+    client.log("user1 (master) id: " + response.body.userId);
+%}
+
+### Register user2 (future player)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "player_tester",
+  "email": "player_tester@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("token2", response.body.token);
+    client.global.set("user2Id", response.body.userId);
+    client.log("user2 (player) id: " + response.body.userId);
+%}
+
+
+### =========================================================
+### Campaign CRUD
+### =========================================================
+
+### Create campaign as user1 -> user1 should become master automatically
+POST {{baseUrl}}/api/campaigns
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Curse of Strahd",
+  "description": "A gothic horror campaign in Barovia."
+}
+
+> {%
+    client.global.set("campaignId", response.body.id);
+    client.test("Status is 201", () => response.status === 201);
+    client.test("Caller role is master", () => response.body.callerRole === "master");
+%}
+
+### Get campaigns for user1 -> should include the new campaign
+GET {{baseUrl}}/api/campaigns
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("List includes created campaign", () =>
+        response.body.some(c => c.id === client.global.get("campaignId")));
+%}
+
+### Get single campaign as user1 (member) -> 200
+GET {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+%}
+
+### Get single campaign as user2 (not yet a member) -> 403
+GET {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 403 (not a member)", () => response.status === 403);
+%}
+
+### Get nonexistent campaign as user1 -> 404
+GET {{baseUrl}}/api/campaigns/999999
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Status is 404 (campaign does not exist)", () => response.status === 404);
+%}
+
+### Update campaign as user1 (master) -> 200
+PUT {{baseUrl}}/api/campaigns/{{campaignId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Curse of Strahd (Revised)",
+  "description": "A gothic horror campaign in Barovia. Now with more fog."
+}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Title updated", () => response.body.title === "Curse of Strahd (Revised)");
+%}
+
+### Update campaign as user2 (not a member yet) -> 403
+PUT {{baseUrl}}/api/campaigns/{{campaignId}}
+Content-Type: application/json
+Authorization: Bearer {{token2}}
+
+{
+  "title": "Hijacked Title",
+  "description": "Should not succeed."
+}
+
+> {%
+    client.test("Status is 403", () => response.status === 403);
+%}
+
+
+### =========================================================
+### Membership management
+### =========================================================
+
+### Get members as user1 -> should be just user1 (master) so far
+GET {{baseUrl}}/api/campaigns/{{campaignId}}/members
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Exactly one member", () => response.body.length === 1);
+%}
+
+### Add user2 as a player -> 201
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/members
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "identifier": "player_tester",
+  "role": "player"
+}
+
+> {%
+    client.test("Status is 201", () => response.status === 201);
+    client.test("Role is player", () => response.body.role === "player");
+%}
+
+### Add user2 again (already a member) -> 409
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/members
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "identifier": "player_tester",
+  "role": "player"
+}
+
+> {%
+    client.test("Status is 409 (already a member)", () => response.status === 409);
+%}
+
+### Add a nonexistent user -> 404
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/members
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "identifier": "nobody_by_this_name",
+  "role": "player"
+}
+
+> {%
+    client.test("Status is 404 (user not found)", () => response.status === 404);
+%}
+
+### user2 can now GET the campaign (is a member) -> 200
+GET {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Caller role is player", () => response.body.callerRole === "player");
+%}
+
+### user2 (player) attempts to add a member -> 403 (not master)
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/members
+Content-Type: application/json
+Authorization: Bearer {{token2}}
+
+{
+  "identifier": "gm_tester",
+  "role": "player"
+}
+
+> {%
+    client.test("Status is 403 (player cannot add members)", () => response.status === 403);
+%}
+
+### user2 (player) attempts to change their own role to master -> 403 (not master)
+PUT {{baseUrl}}/api/campaigns/{{campaignId}}/members/{{user2Id}}/role
+Content-Type: application/json
+Authorization: Bearer {{token2}}
+
+{
+  "role": "master"
+}
+
+> {%
+    client.test("Status is 403", () => response.status === 403);
+%}
+
+### user1 (master) promotes user2 to master -> 200
+PUT {{baseUrl}}/api/campaigns/{{campaignId}}/members/{{user2Id}}/role
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "role": "master"
+}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Role is now master", () => response.body.role === "master");
+%}
+
+### Now there are two masters. user1 demotes themselves back to player -> should succeed (not the last master)
+PUT {{baseUrl}}/api/campaigns/{{campaignId}}/members/{{user1Id}}/role
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "role": "player"
+}
+
+> {%
+    client.test("Status is 200 (user1 demoted, user2 still master)", () => response.status === 200);
+%}
+
+### user2 (sole master) attempts to demote themselves -> 409 (last master)
+PUT {{baseUrl}}/api/campaigns/{{campaignId}}/members/{{user2Id}}/role
+Content-Type: application/json
+Authorization: Bearer {{token2}}
+
+{
+  "role": "player"
+}
+
+> {%
+    client.test("Status is 409 (cannot demote last master)", () => response.status === 409);
+%}
+
+### user1 (now just a player) leaves the campaign via self-removal -> should succeed
+DELETE {{baseUrl}}/api/campaigns/{{campaignId}}/members/{{user1Id}}
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Status is 204 (left campaign)", () => response.status === 204);
+%}
+
+### user2 (sole master) attempts to remove themselves -> 409 (last master)
+DELETE {{baseUrl}}/api/campaigns/{{campaignId}}/members/{{user2Id}}
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 409 (cannot remove last master)", () => response.status === 409);
+%}
+
+### user1 (no longer a member) attempts to GET the campaign -> 403
+GET {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Status is 403 (no longer a member)", () => response.status === 403);
+%}
+
+
+### =========================================================
+### Finish / delete
+### =========================================================
+
+### user2 (master) finishes the campaign -> 204
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/finish
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 204", () => response.status === 204);
+%}
+
+### Confirm finished_on is now set
+GET {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("finishedOn is set", () => response.body.finishedOn !== null);
+%}
+
+### user2 (master) deletes the campaign -> 204, dependent members should be cleaned up first
+DELETE {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 204", () => response.status === 204);
+%}
+
+### Confirm campaign is actually gone -> 404
+GET {{baseUrl}}/api/campaigns/{{campaignId}}
+Authorization: Bearer {{token2}}
+
+> {%
+    client.test("Status is 404 (campaign deleted)", () => response.status === 404);
+%}

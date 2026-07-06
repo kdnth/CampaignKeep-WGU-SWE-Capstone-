@@ -26,9 +26,14 @@ function handleLogout() {
 <template>
   <nav class="flex items-center justify-between px-8 py-4 bg-black">
     <!-- LOGO -->
-    <RouterLink :to="{ name: 'home' }" class="text-2xl font-normal jacquard">
-      <span class="text-white">Campaign</span>
-      <span class="text-red-500">Keep</span>
+    <RouterLink :to="{ name: 'home' }" class="text-3xl font-normal jacquard">
+      <div class="flex gap-2 items-center">
+        <img src="/favicon.ico" alt="Multi-colored 6-sided dice" class="w-8 h-8" />
+        <div>
+          <span class="text-white">Campaign</span>
+          <span class="text-red-500">Keep</span>
+        </div>
+      </div>
     </RouterLink>
 
     <!-- NAV LINKS -->

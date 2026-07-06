@@ -23,6 +23,24 @@ const router = createRouter({
       meta: { requiresGuest: true },
     },
     {
+      path: '/campaigns',
+      name: 'campaigns',
+      component: () => import('@/views/CampaignListView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/campaigns/create-new',
+      name: 'createCampaign',
+      component: () => import('@/views/CreateCampaignView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/campaigns/:id',
+      name: 'campaignDetail',
+      component: () => import('@/views/CampaignDetailView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue'),
@@ -30,8 +48,12 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
+
+  if (authStore.isAuthenticated && !authStore.userId) {
+    await authStore.fetchCurrentUser()
+  }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return { name: 'login' }

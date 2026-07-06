@@ -22,7 +22,7 @@ public class Campaign extends Auditable {
     @Column(nullable = false, length = 75)
     private String title;
 
-    @Column(nullable = false, length = 3000)
+    @Column(length = 3000)
     private String description;
 
     @Column(name="finished_on")

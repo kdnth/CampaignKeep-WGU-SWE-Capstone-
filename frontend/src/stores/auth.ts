@@ -2,6 +2,12 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import apiClient from '@/api/axios'
 
+export interface UserResponse {
+  userId: number
+  username: string
+  email: string
+}
+
 const TOKEN_ = 'token'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -43,8 +49,8 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function fetchCurrentUser() {
-    const response = await apiClient.get('/users/me')
-    userId.value = response.data.id
+    const response = await apiClient.get<UserResponse>('/users/me')
+    userId.value = response.data.userId
     username.value = response.data.username
   }
 

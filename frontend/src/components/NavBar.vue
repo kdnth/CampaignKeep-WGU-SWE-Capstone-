@@ -2,7 +2,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid'
+import { PxChevronDown, PxChevronUp } from 'oh-vue-icons/icons'
+import { OhVueIcon, addIcons } from 'oh-vue-icons'
+
+addIcons(PxChevronDown, PxChevronUp)
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -29,9 +32,18 @@ function handleLogout() {
     </RouterLink>
 
     <!-- NAV LINKS -->
-    <div class="flex gap-6 absolute left-1/2 -translate-x-1/2">
-      <RouterLink :to="{ name: 'home' }" class="text-gray-300 hover:text-white transition-colors">
+    <div v-if="authStore.isAuthenticated" class="flex gap-6 absolute left-1/2 -translate-x-1/2">
+      <RouterLink
+        :to="{ name: 'home' }"
+        class="text-neutral-300 hover:text-white transition-colors"
+      >
         Home
+      </RouterLink>
+      <RouterLink
+        :to="{ name: 'campaigns' }"
+        class="text-neutral-300 hover:text-white transition-colors"
+      >
+        My Campaigns
       </RouterLink>
     </div>
 
@@ -41,7 +53,7 @@ function handleLogout() {
       <template v-if="!authStore.isAuthenticated">
         <RouterLink
           :to="{ name: 'login' }"
-          class="text-gray-300 hover:text-white transition-colors text-sm"
+          class="text-neutral-300 hover:text-white transition-colors text-sm"
         >
           Login
         </RouterLink>
@@ -58,20 +70,20 @@ function handleLogout() {
         <div class="relative">
           <button
             @click="toggleDropdown"
-            class="flex items-center gap-2 text-gray-300 hover:text-white transition-colors text-sm"
+            class="flex items-center gap-2 text-neutral-300 hover:text-white transition-colors text-sm"
           >
             <span>{{ authStore.username }}</span>
-            <ChevronDownIcon v-if="!dropdownOpen" class="w-4 h-4" />
-            <ChevronUpIcon v-else class="w-4 h-4" />
+            <OhVueIcon name="px-chevron-down" v-if="!dropdownOpen" class="w-4 h-4" />
+            <OhVueIcon name="px-chevron-up" v-else class="w-4 h-4" />
           </button>
 
           <div
             v-if="dropdownOpen"
-            class="absolute right-0 mt-2 w-40 bg-black border border-gray-700 rounded-lg shadow-lg overflow-hidden"
+            class="absolute right-0 mt-2 w-40 bg-black border border-neutral-700 rounded-lg shadow-lg overflow-hidden"
           >
             <button
               @click="handleLogout"
-              class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+              class="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
             >
               Logout
             </button>

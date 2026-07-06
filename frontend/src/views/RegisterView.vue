@@ -60,7 +60,7 @@ async function handleSubmit() {
     <div class="lg:w-1/2 md:w-3/4">
       <h2 class="text-3xl py-4 font-medium text-white">Create an account</h2>
 
-      <div class="flex flex-col px-16 py-8 min-h-fit border-2 border-gray-200 rounded-4xl">
+      <div class="flex flex-col px-16 py-8 min-h-fit border-2 border-neutral-200 rounded-4xl">
         <form @submit.prevent="handleSubmit">
           <div class="flex flex-col pt-4 pb-2">
             <!-- username field -->
@@ -129,7 +129,7 @@ async function handleSubmit() {
 
         <p class="text-white my-4 flex flex-col">
           Already have an account?
-          <RouterLink class="text-white underline hover:text-gray-400" :to="{ name: 'login' }"
+          <RouterLink class="text-white underline hover:text-neutral-400" :to="{ name: 'login' }"
             >Log in</RouterLink
           >
         </p>

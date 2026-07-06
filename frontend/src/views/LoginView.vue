@@ -49,7 +49,7 @@ async function handleSubmit() {
       <h2 class="text-3xl py-4 font-medium text-white">Login</h2>
 
       <!-- Form Card div -->
-      <div class="flex flex-col px-16 py-8 min-h-fit border-2 border-gray-200 rounded-4xl">
+      <div class="flex flex-col px-16 py-8 min-h-fit border-2 border-neutral-200 rounded-4xl">
         <form @submit.prevent="handleSubmit">
           <!-- Username field -->
           <div class="flex flex-col pt-4">
@@ -84,7 +84,7 @@ async function handleSubmit() {
 
           <!-- submit -->
           <div class="flex justify-center">
-            <BaseButton type="submit" :loading="isLoading">
+            <BaseButton variant="submit" type="submit" :loading="isLoading">
               {{ isLoading ? 'Logging in...' : 'Login' }}
             </BaseButton>
           </div>
@@ -93,7 +93,10 @@ async function handleSubmit() {
         <!-- Register link -->
         <p class="text-white my-4 flex gap-2">
           Don't have an account?
-          <RouterLink class="text-white underline hover:text-gray-400" :to="{ name: 'register' }">
+          <RouterLink
+            class="text-white underline hover:text-neutral-400"
+            :to="{ name: 'register' }"
+          >
             Create one</RouterLink
           >
         </p>

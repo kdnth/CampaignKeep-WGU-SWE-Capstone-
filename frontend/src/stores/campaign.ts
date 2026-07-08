@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import apiClient from '@/api/axios'
 import { useAuthStore } from './auth'
+import { type CharacterResponse } from './character'
 
 export interface CampaignResponse {
   id: number
@@ -42,6 +43,8 @@ export const useCampaignStore = defineStore('campaign', () => {
   const campaigns = ref<CampaignResponse[]>([])
   const activeCampaign = ref<CampaignResponse | null>(null)
   const members = ref<CampaignMemberResponse[]>([])
+  const playableCharacters = ref<CharacterResponse[]>([])
+  const nonplayableCharacters = ref<CharacterResponse[]>([])
 
   const currentUserMembership = computed<CampaignMemberResponse | undefined>(() => {
     const authStore = useAuthStore()
@@ -128,10 +131,52 @@ export const useCampaignStore = defineStore('campaign', () => {
     return response.data
   }
 
+  async function addPlayableCharacter(campaignId: number, characterId: number) {
+    const response = await apiClient.post<CharacterResponse>(
+      `/campaigns/${campaignId}/playable-characters/${characterId}`,
+    )
+    playableCharacters.value.push(response.data)
+    return response.data
+  }
+
+  async function removePlayableCharacter(campaignId: number, characterId: number) {
+    await apiClient.delete(`/campaigns/${campaignId}/playable-characters/${characterId}`)
+    playableCharacters.value = playableCharacters.value.filter((c) => c.id !== characterId)
+  }
+
+  async function fetchPlayableCharacters(campaignId: number) {
+    const response = await apiClient.get<CharacterResponse[]>(
+      `/campaigns/${campaignId}/playable-characters`,
+    )
+    playableCharacters.value = response.data
+  }
+
+  async function addNonplayableCharacter(campaignId: number, characterId: number) {
+    const response = await apiClient.post<CharacterResponse>(
+      `/campaigns/${campaignId}/nonplayable-characters/${characterId}`,
+    )
+    nonplayableCharacters.value.push(response.data)
+    return response.data
+  }
+
+  async function removeNonplayableCharacter(campaignId: number, characterId: number) {
+    await apiClient.delete(`/campaigns/${campaignId}/nonplayable-characters/${characterId}`)
+    nonplayableCharacters.value = nonplayableCharacters.value.filter((c) => c.id !== characterId)
+  }
+
+  async function fetchNonplayableCharacters(campaignId: number) {
+    const response = await apiClient.get<CharacterResponse[]>(
+      `/campaigns/${campaignId}/nonplayable-characters`,
+    )
+    nonplayableCharacters.value = response.data
+  }
+
   return {
     campaigns,
     activeCampaign,
     members,
+    playableCharacters,
+    nonplayableCharacters,
     clearCampaigns,
     currentUserMembership,
     isOnlyMaster,
@@ -145,5 +190,11 @@ export const useCampaignStore = defineStore('campaign', () => {
     addMember,
     removeMember,
     changeRole,
+    addPlayableCharacter,
+    removePlayableCharacter,
+    fetchPlayableCharacters,
+    addNonplayableCharacter,
+    removeNonplayableCharacter,
+    fetchNonplayableCharacters,
   }
 })

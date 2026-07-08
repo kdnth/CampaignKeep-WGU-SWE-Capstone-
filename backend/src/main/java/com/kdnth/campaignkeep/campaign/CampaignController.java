@@ -1,5 +1,10 @@
 package com.kdnth.campaignkeep.campaign;
 
+import com.kdnth.campaignkeep.character.Character;
+import com.kdnth.campaignkeep.character.CharacterResponse;
+import com.kdnth.campaignkeep.character.CharacterService;
+import com.kdnth.campaignkeep.character.NonplayableCharacter;
+import com.kdnth.campaignkeep.character.PlayableCharacter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.kdnth.campaignkeep.base.AuthUtil.getUserId;
+
 @RestController
 @RequestMapping("/api/campaigns")
 public class CampaignController {
     private final CampaignService campaignService;
+    private final CharacterService characterService;
 
-    public CampaignController(CampaignService campaignService) {
+    public CampaignController(CampaignService campaignService, CharacterService characterService) {
         this.campaignService = campaignService;
+        this.characterService = characterService;
     }
 
     @PostMapping
@@ -121,7 +130,70 @@ public class CampaignController {
         return ResponseEntity.noContent().build();
     }
 
-    private Long getUserId(Authentication authentication) {
-        return (Long) authentication.getPrincipal();
+    @PostMapping("/{campaignId}/playable-characters/{characterId}")
+    public ResponseEntity<CharacterResponse> addPlayableCharacter(
+            @PathVariable Long campaignId,
+            @PathVariable Long characterId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        Character character = campaignService.addPlayableCharacter(campaignId, characterId, callerId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(characterService.toResponse(character));
     }
+
+    @DeleteMapping("/{campaignId}/playable-characters/{characterId}")
+    public ResponseEntity<Void> removePlayableCharacter(
+            @PathVariable Long campaignId,
+            @PathVariable Long characterId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        campaignService.removePlayableCharacter(campaignId, characterId, callerId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/{campaignId}/playable-characters")
+    public ResponseEntity<List<CharacterResponse>> getPlayableCharacters(
+            @PathVariable Long campaignId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        List<PlayableCharacter> characters = campaignService.getPlayableCharacters(campaignId, callerId);
+        return ResponseEntity.ok(characterService.toResponseList(characters));
+
+    }
+
+    @PostMapping("/{campaignId}/nonplayable-characters/{characterId}")
+    public ResponseEntity<CharacterResponse> addNonplayableCharacter(
+            @PathVariable Long campaignId,
+            @PathVariable Long characterId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        Character character = campaignService.addNonplayableCharacter(campaignId, characterId, callerId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(characterService.toResponse(character));
+    }
+
+    @DeleteMapping("/{campaignId}/nonplayable-characters/{characterId}")
+    public ResponseEntity<Void> removeNonplayableCharacter(
+            @PathVariable Long campaignId,
+            @PathVariable Long characterId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        campaignService.removeNonplayableCharacter(campaignId, characterId, callerId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/{campaignId}/nonplayable-characters")
+    public ResponseEntity<List<CharacterResponse>> getNonplayableCharacters(
+            @PathVariable Long campaignId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        List<NonplayableCharacter> characters = campaignService.getNonplayableCharacters(campaignId, callerId);
+        return ResponseEntity.ok(characterService.toResponseList(characters));
+
+    }
+
 }

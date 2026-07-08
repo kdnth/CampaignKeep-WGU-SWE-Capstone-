@@ -1,5 +1,9 @@
 package com.kdnth.campaignkeep.campaign;
 
+import com.kdnth.campaignkeep.character.Character;
+import com.kdnth.campaignkeep.character.NonplayableCharacter;
+import com.kdnth.campaignkeep.character.PlayableCharacter;
+
 import java.util.List;
 
 public interface CampaignService {
@@ -14,4 +18,16 @@ public interface CampaignService {
     CampaignMemberResponse addMember(Long campaignId, Long actingUserId, AddMemberRequest request);
     void removeMember(Long campaignId, Long actingUserId, Long targetUserId);
     CampaignMemberResponse changeRole(Long campaignId, Long actingUserId, Long targetUserId, ChangeRoleRequest request);
+
+    CampaignMember requireMaster(Long campaignId, Long userId);
+    CampaignMember requireMembership(Long campaignId, Long userId);
+    void detachCharacterFromAllCampaigns(Long characterId);
+
+    Character addPlayableCharacter(Long campaignId, Long characterId, Long callerId);
+    void removePlayableCharacter(Long campaignId, Long characterId, Long callerId);
+    Character addNonplayableCharacter(Long campaignId, Long characterId, Long callerId);
+    void removeNonplayableCharacter(Long campaignId, Long characterId, Long callerId);
+
+    List<PlayableCharacter> getPlayableCharacters(Long campaignId, Long callerId);
+    List<NonplayableCharacter> getNonplayableCharacters(Long campaignId, Long callerId);
 }

@@ -2,9 +2,14 @@ package com.kdnth.campaignkeep.campaign;
 
 import com.kdnth.campaignkeep.base.AccessDeniedException;
 import com.kdnth.campaignkeep.base.ConflictException;
+import com.kdnth.campaignkeep.character.CharacterRepository;
+import com.kdnth.campaignkeep.character.NonplayableCharacter;
+import com.kdnth.campaignkeep.character.PlayableCharacter;
 import com.kdnth.campaignkeep.user.User;
 import com.kdnth.campaignkeep.user.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import com.kdnth.campaignkeep.character.Character;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,14 +19,25 @@ public class CampaignServiceImpl implements CampaignService {
     private final CampaignRepository campaignRepository;
     private final CampaignMemberRepository campaignMemberRepository;
     private final UserRepository userRepository;
+    private final CharacterRepository characterRepository;
+    private final CampaignPlayableCharacterRepository
+            campaignPlayableCharacterRepository;
+    private final CampaignNonplayableCharacterRepository
+            campaignNonplayableCharacterRepository;
+
 
     public CampaignServiceImpl(
             CampaignRepository campaignRepository,
             CampaignMemberRepository campaignMemberRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, CharacterRepository characterRepository,
+            CampaignPlayableCharacterRepository campaignPlayableCharacterRepository,
+            CampaignNonplayableCharacterRepository campaignNonplayableCharacterRepository) {
         this.campaignRepository = campaignRepository;
         this.campaignMemberRepository = campaignMemberRepository;
         this.userRepository = userRepository;
+        this.characterRepository = characterRepository;
+        this.campaignPlayableCharacterRepository = campaignPlayableCharacterRepository;
+        this.campaignNonplayableCharacterRepository = campaignNonplayableCharacterRepository;
     }
 
     @Override
@@ -133,22 +149,114 @@ public class CampaignServiceImpl implements CampaignService {
         return toMemberResponse(targetMember);
     }
 
-    private CampaignMember requireMembership(Long campaignId, Long userId) {
+    @Override
+    public CampaignMember requireMembership(Long campaignId, Long userId) {
         campaignExists(campaignId);
 
         return campaignMemberRepository.findByCampaign_IdAndUser_Id(campaignId, userId)
                 .orElseThrow(() -> new AccessDeniedException("Not a member of this campaign"));
     }
 
-    private CampaignMember requireMaster(Long campaignId, Long userId) {
+    @Override
+    public CampaignMember requireMaster(Long campaignId, Long userId) {
         CampaignMember membership = requireMembership(campaignId, userId);
-        if (!membership.getRole().equals(CampaignRole.master)) {
+        if (membership.getRole() != CampaignRole.master) {
             throw new AccessDeniedException("Can only be performed by game master");
         }
         return membership;
     }
 
-    private CampaignResponse toCampaignResponse(Campaign campaign, CampaignRole callerRole) {
+    @Override
+    @Transactional
+    public Character addPlayableCharacter(Long campaignId, Long characterId, Long callerId) {
+        Campaign campaign = requireMembership(campaignId, callerId).getCampaign();
+
+        Character character = characterRepository.findById(characterId)
+                                                                                  .orElseThrow(() -> new NoSuchElementException("Character not found."));
+        if (!character.canBeEditedBy(callerId)) {
+            throw new AccessDeniedException("You do not own this character.");
+        }
+
+        if (campaignPlayableCharacterRepository.existsByCharacterIdAndCampaignId(characterId, campaignId)) {
+            throw new ConflictException("Character is already attached to this campaign.");
+        }
+
+        CampaignPlayableCharacter link = new CampaignPlayableCharacter();
+        link.setCampaign(campaign);
+        link.setCharacter(character);
+        campaignPlayableCharacterRepository.save(link);
+        return character;
+    }
+
+    @Override
+    @Transactional
+    public void removePlayableCharacter(Long campaignId, Long characterId, Long callerId) {
+        Character character = characterRepository.findById(characterId)
+                                                 .orElseThrow(() -> new NoSuchElementException("Character not found."));
+
+        boolean isOwner = character.canBeEditedBy(callerId);
+        boolean isMaster = isCallerMaster(campaignId, callerId);
+        if (!isOwner && !isMaster) {
+            throw new AccessDeniedException("You do not have permission to remove this character.");
+        }
+
+        CampaignPlayableCharacter.CampaignPlayableCharacterId id =
+                new CampaignPlayableCharacter.CampaignPlayableCharacterId(campaignId, characterId);
+        campaignPlayableCharacterRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Character addNonplayableCharacter(Long campaignId, Long characterId, Long callerId) {
+        Campaign campaign = findCampaign(campaignId);
+        requireMaster(campaignId, callerId);
+
+        Character character = characterRepository.findById(characterId)
+                                                 .orElseThrow(() -> new NoSuchElementException("Character not found."));
+        if (!(character instanceof NonplayableCharacter) || !character.canBeEditedBy(callerId)) {
+            throw new AccessDeniedException("You do not own this NPC.");
+        }
+
+        if (campaignNonplayableCharacterRepository.existsByCharacterIdAndCampaignId(characterId, campaignId)) {
+            throw new ConflictException("NPC is already attached to this campaign.");
+        }
+
+        CampaignNonplayableCharacter link = new CampaignNonplayableCharacter();
+        link.setCampaign(campaign);
+        link.setCharacter(character);
+        campaignNonplayableCharacterRepository.save(link);
+        return character;
+    }
+
+    @Override
+    @Transactional
+    public void removeNonplayableCharacter(Long campaignId, Long characterId, Long callerId) {
+        requireMaster(campaignId, callerId);
+
+        CampaignNonplayableCharacter.CampaignNonplayableCharacterId id =
+                new CampaignNonplayableCharacter.CampaignNonplayableCharacterId(campaignId, characterId);
+        campaignNonplayableCharacterRepository.deleteById(id);
+    }
+
+    @Override
+    public List<PlayableCharacter> getPlayableCharacters(Long campaignId, Long callerId) {
+        requireMembership(campaignId, callerId);
+        return campaignPlayableCharacterRepository.findByCampaignId(campaignId).stream().map(link -> (PlayableCharacter) link.getCharacter()).toList();
+    }
+
+    @Override
+    public List<NonplayableCharacter> getNonplayableCharacters(Long campaignId, Long callerId) {
+        requireMaster(campaignId, callerId);
+        return campaignNonplayableCharacterRepository.findByCampaignId(campaignId).stream().map(link -> (NonplayableCharacter) link.getCharacter()).toList();
+    }
+
+    @Override
+    public void detachCharacterFromAllCampaigns(Long characterId) {
+        campaignPlayableCharacterRepository.deleteAll(campaignPlayableCharacterRepository.findByCharacterId(characterId));
+        campaignNonplayableCharacterRepository.deleteAll(campaignNonplayableCharacterRepository.findByCharacterId(characterId));
+    }
+
+    private static CampaignResponse toCampaignResponse(Campaign campaign, CampaignRole callerRole) {
         return new CampaignResponse(
                 campaign.getId(),
                 campaign.getTitle(),
@@ -178,9 +286,21 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     private void guardAgainstLastMasterLoss(CampaignMember targetMember) {
-        if (targetMember.getRole().equals(CampaignRole.master)
+        if (targetMember.getRole() == CampaignRole.master
             && campaignMemberRepository.countByCampaign_IdAndRole(targetMember.getCampaign().getId(), CampaignRole.master) == 1) {
             throw new ConflictException("Campaign must have at least one game master.");
         }
     }
+
+    private boolean isCallerMaster(Long campaignId, Long callerId) {
+        return campaignMemberRepository.findByCampaign_IdAndUser_Id(campaignId, callerId)
+                                       .map(m -> m.getRole() == CampaignRole.master)
+                                       .orElse(false);
+    }
+
+    private Campaign findCampaign(Long campaignId) {
+        return campaignRepository.findById(campaignId)
+                                  .orElseThrow(() -> new NoSuchElementException("Campaign not found"));
+    }
+
 }

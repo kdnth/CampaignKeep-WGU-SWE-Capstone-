@@ -6,6 +6,7 @@ import CampaignInfoHero from '@/components/campaign/CampaignInfoHero.vue'
 import CharacterOverviewPanel from '@/components/character/CharacterOverviewPanel.vue'
 import CharacterStatsTab from '@/components/character/CharacterStatsTab.vue'
 import PlayerNoteEditor from '@/components/notes/PlayerNoteEditor.vue'
+import PlayerSessionLogsPanel from '@/components/sessionlogs/PlayerSessionLogsPanel.vue'
 import CharacterSpellbookPanel from '@/components/spells/CharacterSpellbookPanel.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useCampaignStore } from '@/stores/campaign'
@@ -32,6 +33,7 @@ const tabs = computed(() => [
   { id: 'stats', label: 'Stats', disabled: !playerCharacter.value },
   { id: 'notes', label: 'Notes', disabled: !playerCharacter.value },
   { id: 'spells', label: 'Spells', disabled: !playerCharacter.value },
+  { id: 'session-logs', label: 'Session Logs' },
   { id: 'equipment', label: 'Equipment', disabled: true },
   { id: 'attacks', label: 'Attacks', disabled: true },
   { id: 'roll', label: 'Roll', disabled: true },
@@ -95,6 +97,9 @@ onMounted(async () => {
             v-if="playerCharacter"
             :character-id="playerCharacter.id"
           />
+        </template>
+        <template #session-logs>
+          <PlayerSessionLogsPanel :campaign-id="campaignId" />
         </template>
         <template #equipment>
           <p class="text-neutral-400">Coming soon.</p>

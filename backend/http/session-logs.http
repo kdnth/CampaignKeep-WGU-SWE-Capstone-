@@ -1,0 +1,151 @@
+### =========================================================
+### Session Logs API — run after campaigns.http or standalone setup
+### Requires: campaign with GM + player member
+### =========================================================
+
+### Register GM
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "sessionlogs_gm",
+  "email": "sessionlogs_gm@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("sessionLogsGmToken", response.body.token);
+%}
+
+### Register player
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "sessionlogs_player",
+  "email": "sessionlogs_player@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("sessionLogsPlayerToken", response.body.token);
+%}
+
+### Create campaign as GM
+POST {{baseUrl}}/api/campaigns
+Content-Type: application/json
+Authorization: Bearer {{sessionLogsGmToken}}
+
+{
+  "title": "Session Logs Test Campaign",
+  "description": "Campaign for session logs API testing."
+}
+
+> {%
+    client.global.set("sessionLogsCampaignId", response.body.id);
+%}
+
+### Add player to campaign
+POST {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/members
+Content-Type: application/json
+Authorization: Bearer {{sessionLogsGmToken}}
+
+{
+  "identifier": "sessionlogs_player",
+  "role": "player"
+}
+
+> {%
+    client.test("Player added", () => response.status === 201);
+%}
+
+### Player cannot create session log -> 403
+POST {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs
+Content-Type: application/json
+Authorization: Bearer {{sessionLogsPlayerToken}}
+
+{
+  "title": "Unauthorized Session",
+  "body": "Should not be saved."
+}
+
+> {%
+    client.test("Status is 403 (player cannot create session logs)", () => response.status === 403);
+%}
+
+### GM lists session logs (empty) -> 200
+GET {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs
+Authorization: Bearer {{sessionLogsGmToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Empty list", () => response.body.length === 0);
+%}
+
+### Player can list session logs (empty) -> 200
+GET {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs
+Authorization: Bearer {{sessionLogsPlayerToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Empty list", () => response.body.length === 0);
+%}
+
+### GM creates session log -> 201
+POST {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs
+Content-Type: application/json
+Authorization: Bearer {{sessionLogsGmToken}}
+
+{
+  "title": "Session 1 — The Goblin Cave",
+  "body": "The party cleared the goblin hideout and rescued the merchant."
+}
+
+> {%
+    client.global.set("sessionLogId", response.body.id);
+    client.test("Status is 201", () => response.status === 201);
+    client.test("Title saved", () => response.body.title === "Session 1 — The Goblin Cave");
+%}
+
+### GM lists session logs -> includes created log
+GET {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs
+Authorization: Bearer {{sessionLogsGmToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Contains created log", () =>
+        response.body.some(log => log.id === client.global.get("sessionLogId")));
+%}
+
+### Player gets session log detail -> 200
+GET {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs/{{sessionLogId}}
+Authorization: Bearer {{sessionLogsPlayerToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Body returned", () => response.body.body.includes("goblin hideout"));
+%}
+
+### Player cannot delete session log -> 403
+DELETE {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs/{{sessionLogId}}
+Authorization: Bearer {{sessionLogsPlayerToken}}
+
+> {%
+    client.test("Status is 403 (player cannot delete session logs)", () => response.status === 403);
+%}
+
+### GM deletes session log -> 204
+DELETE {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs/{{sessionLogId}}
+Authorization: Bearer {{sessionLogsGmToken}}
+
+> {%
+    client.test("Status is 204", () => response.status === 204);
+%}
+
+### Confirm session log is gone -> 404
+GET {{baseUrl}}/api/campaigns/{{sessionLogsCampaignId}}/session-logs/{{sessionLogId}}
+Authorization: Bearer {{sessionLogsGmToken}}
+
+> {%
+    client.test("Status is 404", () => response.status === 404);
+%}

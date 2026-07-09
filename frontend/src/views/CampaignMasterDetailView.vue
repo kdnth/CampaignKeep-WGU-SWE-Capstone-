@@ -8,6 +8,7 @@ import CharacterOverviewPanel from '@/components/character/CharacterOverviewPane
 import CompactCampaignMemberList from '@/components/CompactCampaignMemberList.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
 import MasterNotesPanel from '@/components/notes/MasterNotesPanel.vue'
+import MasterSessionLogsPanel from '@/components/sessionlogs/MasterSessionLogsPanel.vue'
 import MasterSpellsPanel from '@/components/spells/MasterSpellsPanel.vue'
 import { useCampaignStore } from '@/stores/campaign'
 import { isAxiosError } from 'axios'
@@ -61,6 +62,7 @@ const tabs = [
   { id: 'npcs', label: 'NPCs' },
   { id: 'spells', label: 'Spells' },
   { id: 'notes', label: 'Notes' },
+  { id: 'session-logs', label: 'Session Logs' },
   { id: 'members', label: 'Campaign Members' },
 ]
 
@@ -152,6 +154,10 @@ onMounted(async () => {
 
         <template #notes>
           <MasterNotesPanel :campaign-id="campaignId" />
+        </template>
+
+        <template #session-logs>
+          <MasterSessionLogsPanel :campaign-id="campaignId" />
         </template>
 
         <template #spells>

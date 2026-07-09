@@ -1,0 +1,171 @@
+### =========================================================
+### Notes API — run after campaigns.http or standalone setup
+### Requires: campaign with player member + attached PC for player-note tests
+### =========================================================
+
+### Register GM
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "notes_gm",
+  "email": "notes_gm@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("notesGmToken", response.body.token);
+%}
+
+### Register player
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "notes_player",
+  "email": "notes_player@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("notesPlayerToken", response.body.token);
+    client.global.set("notesPlayerId", response.body.userId);
+%}
+
+### Create campaign as GM
+POST {{baseUrl}}/api/campaigns
+Content-Type: application/json
+Authorization: Bearer {{notesGmToken}}
+
+{
+  "title": "Notes Test Campaign",
+  "description": "Campaign for notes API testing."
+}
+
+> {%
+    client.global.set("notesCampaignId", response.body.id);
+%}
+
+### Add player to campaign
+POST {{baseUrl}}/api/campaigns/{{notesCampaignId}}/members
+Content-Type: application/json
+Authorization: Bearer {{notesGmToken}}
+
+{
+  "identifier": "notes_player",
+  "role": "player"
+}
+
+> {%
+    client.test("Player added", () => response.status === 201);
+%}
+
+### Player note without attached PC -> 404
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/player-note
+Authorization: Bearer {{notesPlayerToken}}
+
+> {%
+    client.test("Status is 404 (no character attached)", () => response.status === 404);
+%}
+
+### Player cannot access master notes -> 403
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes
+Authorization: Bearer {{notesPlayerToken}}
+
+> {%
+    client.test("Status is 403 (player cannot list master notes)", () => response.status === 403);
+%}
+
+### GM lists master notes (empty) -> 200
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes
+Authorization: Bearer {{notesGmToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Empty list", () => response.body.length === 0);
+%}
+
+### GM creates master note -> 201
+POST {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes
+Content-Type: application/json
+Authorization: Bearer {{notesGmToken}}
+
+{
+  "title": "Session 1 Prep",
+  "body": "Introduce the tavern keeper and the missing shipment hook."
+}
+
+> {%
+    client.global.set("masterNoteId", response.body.id);
+    client.test("Status is 201", () => response.status === 201);
+    client.test("Title saved", () => response.body.title === "Session 1 Prep");
+%}
+
+### GM lists master notes -> includes created note
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes
+Authorization: Bearer {{notesGmToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Contains created note", () =>
+        response.body.some(n => n.id === client.global.get("masterNoteId")));
+%}
+
+### GM gets master note detail -> 200
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes/{{masterNoteId}}
+Authorization: Bearer {{notesGmToken}}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Body returned", () => response.body.body.includes("tavern keeper"));
+%}
+
+### GM updates master note -> 200
+PUT {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes/{{masterNoteId}}
+Content-Type: application/json
+Authorization: Bearer {{notesGmToken}}
+
+{
+  "title": "Session 1 Prep (Revised)",
+  "body": "Add fog effect when players enter Barovia."
+}
+
+> {%
+    client.test("Status is 200", () => response.status === 200);
+    client.test("Title updated", () => response.body.title === "Session 1 Prep (Revised)");
+%}
+
+### GM deletes master note -> 204
+DELETE {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes/{{masterNoteId}}
+Authorization: Bearer {{notesGmToken}}
+
+> {%
+    client.test("Status is 204", () => response.status === 204);
+%}
+
+### Confirm master note is gone -> 404
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/master-notes/{{masterNoteId}}
+Authorization: Bearer {{notesGmToken}}
+
+> {%
+    client.test("Status is 404", () => response.status === 404);
+%}
+
+### =========================================================
+### Player note tests require a playable character attached to the campaign.
+### Create PC via POST /api/characters/playable-characters and attach with
+### POST /api/campaigns/{id}/playable-characters/{characterId}, then run:
+### =========================================================
+
+### GET player note (empty shell when PC attached but no note saved yet)
+GET {{baseUrl}}/api/campaigns/{{notesCampaignId}}/player-note?characterId={{characterId}}
+Authorization: Bearer {{notesPlayerToken}}
+
+### PUT player note (upsert)
+PUT {{baseUrl}}/api/campaigns/{{notesCampaignId}}/player-note?characterId={{characterId}}
+Content-Type: application/json
+Authorization: Bearer {{notesPlayerToken}}
+
+{
+  "body": "Met the party at the crossroads."
+}

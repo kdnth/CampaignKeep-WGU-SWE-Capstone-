@@ -7,6 +7,7 @@ import CampaignInfoHero from '@/components/campaign/CampaignInfoHero.vue'
 import CharacterOverviewPanel from '@/components/character/CharacterOverviewPanel.vue'
 import CompactCampaignMemberList from '@/components/CompactCampaignMemberList.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import MasterNotesPanel from '@/components/notes/MasterNotesPanel.vue'
 import { useCampaignStore } from '@/stores/campaign'
 import { isAxiosError } from 'axios'
 import { storeToRefs } from 'pinia'
@@ -57,6 +58,7 @@ const confirmMessage = computed(() => {
 const tabs = [
   { id: 'pcs', label: 'Player Characters' },
   { id: 'npcs', label: 'NPCs' },
+  { id: 'notes', label: 'Notes' },
   { id: 'members', label: 'Campaign Members' },
 ]
 
@@ -144,6 +146,10 @@ onMounted(async () => {
               editable-hp
             />
           </div>
+        </template>
+
+        <template #notes>
+          <MasterNotesPanel :campaign-id="campaignId" />
         </template>
 
         <template #members>

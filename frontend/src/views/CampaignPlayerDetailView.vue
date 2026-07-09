@@ -5,6 +5,7 @@ import AddCampaignCharacterPanel from '@/components/AddCampaignCharacterPanel.vu
 import CampaignInfoHero from '@/components/campaign/CampaignInfoHero.vue'
 import CharacterOverviewPanel from '@/components/character/CharacterOverviewPanel.vue'
 import CharacterStatsTab from '@/components/character/CharacterStatsTab.vue'
+import PlayerNoteEditor from '@/components/notes/PlayerNoteEditor.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useCampaignStore } from '@/stores/campaign'
 import { isAxiosError } from 'axios'
@@ -28,7 +29,7 @@ const playerCharacter = computed(() =>
 
 const tabs = computed(() => [
   { id: 'stats', label: 'Stats', disabled: !playerCharacter.value },
-  { id: 'notes', label: 'Notes', disabled: true },
+  { id: 'notes', label: 'Notes', disabled: !playerCharacter.value },
   { id: 'spells', label: 'Spells', disabled: true },
   { id: 'equipment', label: 'Equipment', disabled: true },
   { id: 'attacks', label: 'Attacks', disabled: true },
@@ -81,7 +82,12 @@ onMounted(async () => {
           />
         </template>
         <template #notes>
-          <p class="text-neutral-400">Coming soon.</p>
+          <PlayerNoteEditor
+            v-if="playerCharacter"
+            :campaign-id="campaignId"
+            :character-id="playerCharacter.id"
+            :character-name="playerCharacter.name"
+          />
         </template>
         <template #spells>
           <p class="text-neutral-400">Coming soon.</p>

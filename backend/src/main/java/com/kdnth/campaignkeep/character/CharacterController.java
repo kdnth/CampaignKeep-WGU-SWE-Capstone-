@@ -1,5 +1,6 @@
 package com.kdnth.campaignkeep.character;
 
+import com.kdnth.campaignkeep.campaign.CampaignResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +68,15 @@ public class CharacterController {
         return ResponseEntity.ok(characterService.toResponse(character));
     }
 
+    @GetMapping("/{id}/campaigns")
+    public ResponseEntity<List<CampaignResponse>> getCampaignsForCharacter(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.ok(characterService.getCampaignsForCharacter(id, callerId));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCharacter(
             @PathVariable Long id,
@@ -77,21 +87,48 @@ public class CharacterController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<CharacterResponse> updateCharacterStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCharacterStatusRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        Character character = characterService.updateCharacterStatus(id, request, callerId);
+        return ResponseEntity.ok(characterService.toResponse(character));
+    }
+
     @GetMapping("/mine/playable")
-    public ResponseEntity<List<CharacterResponse>> getMyPlayableCharacters(
+    public ResponseEntity<List<CharacterWithCampaignsResponse>> getMyPlayableCharacters(
             Authentication authentication
     ) {
         Long callerId = getUserId(authentication);
         List<PlayableCharacter> characters = playableCharacterRepository.findByPlayerId(callerId);
-        return ResponseEntity.ok(characterService.toResponseList(characters));
+
+        List<CharacterWithCampaignsResponse> result = characters.stream()
+                .map(c -> new CharacterWithCampaignsResponse(
+                        characterService.toResponse(c),
+                        characterService.getCampaignNames(c.getId())
+                ))
+                .toList();
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/mine/nonplayable")
-    public ResponseEntity<List<CharacterResponse>> getMyNonplayableCharacters(
+    public ResponseEntity<List<CharacterWithCampaignsResponse>> getMyNonplayableCharacters(
             Authentication authentication
     ) {
         Long callerId = getUserId(authentication);
         List<NonplayableCharacter> characters = nonplayableCharacterRepository.findByCreatedBy_Id(callerId);
-        return ResponseEntity.ok(characterService.toResponseList(characters));
+
+        List<CharacterWithCampaignsResponse> result = characters.stream()
+                .map(c -> new CharacterWithCampaignsResponse(
+                        characterService.toResponse(c),
+                        characterService.getCampaignNames(c.getId())
+                ))
+                .toList();
+
+        return ResponseEntity.ok(result);
     }
 }

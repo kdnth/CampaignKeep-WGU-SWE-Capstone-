@@ -171,6 +171,15 @@ export const useCampaignStore = defineStore('campaign', () => {
     nonplayableCharacters.value = response.data
   }
 
+  function syncCampaignCharacter(updated: CharacterResponse) {
+    const updateInList = (list: CharacterResponse[]) => {
+      const index = list.findIndex((c) => c.id === updated.id)
+      if (index !== -1) list[index] = updated
+    }
+    updateInList(playableCharacters.value)
+    updateInList(nonplayableCharacters.value)
+  }
+
   return {
     campaigns,
     activeCampaign,
@@ -196,5 +205,6 @@ export const useCampaignStore = defineStore('campaign', () => {
     addNonplayableCharacter,
     removeNonplayableCharacter,
     fetchNonplayableCharacters,
+    syncCampaignCharacter,
   }
 })

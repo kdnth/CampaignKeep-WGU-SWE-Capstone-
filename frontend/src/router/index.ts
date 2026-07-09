@@ -41,6 +41,36 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/characters',
+      name: 'characters',
+      component: () => import('@/views/CharacterListView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/characters/create-new-playable',
+      name: 'createPlayableCharacter',
+      component: () => import('@/views/CreatePlayableCharacterView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/characters/create-new-npc',
+      name: 'createNonplayableCharacter',
+      component: () => import('@/views/CreateNonplayableCharacterView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/characters/:id',
+      name: 'characterDetail',
+      component: () => import('@/views/CharacterDetailView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/test-component',
+      name: 'testComponent',
+      component: () => import('@/views/TestComponentView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue'),

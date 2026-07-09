@@ -33,7 +33,7 @@ function handleClick(id: number) {
 <template>
   <div class="flex flex-col gap-3">
     <div class="flex items-center justify-between">
-      <h3 class="text-white text-lg">Your Campaigns</h3>
+      <h4 class="text-3xl text-white">My Campaigns</h4>
       <RouterLink :to="{ name: 'campaigns' }" class="text-sm text-purple-400 hover:underline">
         View all
       </RouterLink>

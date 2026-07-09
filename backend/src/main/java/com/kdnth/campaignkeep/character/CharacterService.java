@@ -1,5 +1,7 @@
 package com.kdnth.campaignkeep.character;
 
+import com.kdnth.campaignkeep.campaign.CampaignResponse;
+
 import java.util.List;
 
 public interface CharacterService {
@@ -9,6 +11,9 @@ public interface CharacterService {
     Character getCharacter(Long characterId, Long callerId);
     void deleteCharacter(Long characterId, Long callerId);
     Character getCharacterForCampaignView(Long characterId, Long campaignId, Long callerId);
+    List<CampaignResponse> getCampaignsForCharacter(Long characterId, Long callerId);
+    Character updateCharacterStatus(Long characterId, UpdateCharacterStatusRequest request, Long callerId);
     CharacterResponse toResponse(Character character);
     List<CharacterResponse> toResponseList(List<? extends Character> characters);
+    List<String> getCampaignNames(Long characterId);
 }

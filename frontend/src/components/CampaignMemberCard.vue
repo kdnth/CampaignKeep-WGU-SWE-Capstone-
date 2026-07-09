@@ -26,9 +26,11 @@ const viewerMembership = computed(() => members.value.find((m) => m.userId === a
 
 const isSelf = computed(() => props.member.userId === authStore.userId)
 
+const masterCount = computed(() => members.value.filter((m) => m.role === 'master').length)
+
 const isLastMaster = computed(() => {
   if (props.member.role !== 'master') return false
-  return members.value.filter((m) => m.role === 'master').length === 1
+  return masterCount.value === 1
 })
 
 const canRemove = computed(() => {
@@ -37,8 +39,12 @@ const canRemove = computed(() => {
 })
 
 const canChangeRole = computed(() => {
-  if (isSelf.value) return false
-  return viewerMembership.value?.role === 'master' && !isLastMaster.value
+  if (isSelf.value) {
+    return props.member.role === 'master' && masterCount.value > 1
+  }
+  if (viewerMembership.value?.role !== 'master') return false
+  if (props.member.role === 'master') return masterCount.value > 1
+  return true
 })
 </script>
 

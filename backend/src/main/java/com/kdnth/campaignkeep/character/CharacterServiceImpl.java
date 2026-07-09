@@ -3,11 +3,15 @@ package com.kdnth.campaignkeep.character;
 import com.kdnth.campaignkeep.background.Background;
 import com.kdnth.campaignkeep.background.BackgroundRepository;
 import com.kdnth.campaignkeep.base.AccessDeniedException;
+import com.kdnth.campaignkeep.campaign.Campaign;
 import com.kdnth.campaignkeep.campaign.CampaignMemberRepository;
 import com.kdnth.campaignkeep.campaign.CampaignNonplayableCharacterRepository;
 import com.kdnth.campaignkeep.campaign.CampaignPlayableCharacterRepository;
+import com.kdnth.campaignkeep.campaign.CampaignResponse;
+import com.kdnth.campaignkeep.campaign.CampaignRole;
 import com.kdnth.campaignkeep.campaign.CampaignService;
 import com.kdnth.campaignkeep.dndclass.DndClass;
+import com.kdnth.campaignkeep.dndclass.DndClassRepository;
 import com.kdnth.campaignkeep.language.Language;
 import com.kdnth.campaignkeep.language.LanguageRepository;
 import com.kdnth.campaignkeep.race.Race;
@@ -25,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 @Service
 public class CharacterServiceImpl implements CharacterService {
@@ -35,6 +40,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final RaceRepository raceRepository;
     private final SubraceRepository subraceRepository;
     private final BackgroundRepository backgroundRepository;
+    private final DndClassRepository dndClassRepository;
     private final CharacterRepository characterRepository;
     private final CharacterClassRepository characterClassRepository;
     private final CharacterLanguageRepository characterLanguageRepository;
@@ -43,11 +49,14 @@ public class CharacterServiceImpl implements CharacterService {
     private final CampaignPlayableCharacterRepository campaignPlayableCharacterRepository;
     private final CampaignNonplayableCharacterRepository campaignNonplayableCharacterRepository;
     private final CampaignService campaignService;
+    private final PlayableCharacterRepository playableCharacterRepository;
+    private final NonplayableCharacterRepository nonplayableCharacterRepository;
 
     public CharacterServiceImpl(RaceAbilityPointBonusRepository raceAbilityPointBonusRepository,
                                 SubraceAbilityPointBonusRepository subraceAbilityPointBonusRepository,
                                 UserRepository userRepository, RaceRepository raceRepository,
                                 SubraceRepository subraceRepository, BackgroundRepository backgroundRepository,
+                                DndClassRepository dndClassRepository,
                                 CharacterRepository characterRepository,
                                 CharacterClassRepository characterClassRepository,
                                 CharacterLanguageRepository characterLanguageRepository,
@@ -55,13 +64,16 @@ public class CharacterServiceImpl implements CharacterService {
                                 CampaignMemberRepository campaignMemberRepository,
                                 CampaignPlayableCharacterRepository campaignPlayableCharacterRepository,
                                 CampaignNonplayableCharacterRepository campaignNonplayableCharacterRepository,
-                                CampaignService campaignService) {
+                                CampaignService campaignService,
+                                PlayableCharacterRepository playableCharacterRepository,
+                                NonplayableCharacterRepository nonplayableCharacterRepository) {
         this.raceAbilityPointBonusRepository = raceAbilityPointBonusRepository;
         this.subraceAbilityPointBonusRepository = subraceAbilityPointBonusRepository;
         this.userRepository = userRepository;
         this.raceRepository = raceRepository;
         this.subraceRepository = subraceRepository;
         this.backgroundRepository = backgroundRepository;
+        this.dndClassRepository = dndClassRepository;
         this.characterRepository = characterRepository;
         this.characterClassRepository = characterClassRepository;
         this.characterLanguageRepository = characterLanguageRepository;
@@ -70,9 +82,12 @@ public class CharacterServiceImpl implements CharacterService {
         this.campaignPlayableCharacterRepository = campaignPlayableCharacterRepository;
         this.campaignNonplayableCharacterRepository = campaignNonplayableCharacterRepository;
         this.campaignService = campaignService;
+        this.playableCharacterRepository = playableCharacterRepository;
+        this.nonplayableCharacterRepository = nonplayableCharacterRepository;
     }
 
     @Override
+    @Transactional
     public PlayableCharacter createPlayableCharacter(CreatePlayableCharacterRequest request, Long callerId) {
         User player = userRepository.findById(callerId)
                 .orElseThrow(() -> new AccessDeniedException("Player not found"));
@@ -82,9 +97,12 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseThrow(() -> new AccessDeniedException("Subrace not found")) : null;
         Background background = request.backgroundId() != null ? backgroundRepository.findById(request.backgroundId())
                 .orElseThrow(() -> new AccessDeniedException("Background not found")) : null;
+        DndClass dndClass = dndClassRepository.findById(request.classId())
+                .orElseThrow(() -> new AccessDeniedException("Class not found"));
 
         PlayableCharacter character = new PlayableCharacter();
         character.setPlayer(player);
+        character.setName(request.name());
         character.setRace(race);
         character.setSubrace(subrace);
         character.setBackground(background);
@@ -104,7 +122,12 @@ public class CharacterServiceImpl implements CharacterService {
         character.setInitiativeBonus(calculateModifier(character.getDexterity()));
         character.setSpeed(race.getSpeed());
 
-        return characterRepository.save(character);
+        PlayableCharacter saved = characterRepository.save(character);
+
+        assignClass(saved, dndClass);
+        assignLanguages(saved, request.languageIds());
+
+        return saved;
     }
 
     private short calculateModifier(short abilityScore) {
@@ -167,6 +190,54 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
+    public List<CampaignResponse> getCampaignsForCharacter(Long characterId, Long callerId) {
+        Character character = characterRepository.findById(characterId)
+                                                 .orElseThrow(() -> new NoSuchElementException("Character not found."));
+        requireOwner(character, callerId);
+
+        List<Campaign> campaigns = character instanceof PlayableCharacter
+                ? campaignPlayableCharacterRepository.findByCharacterId(characterId).stream()
+                        .map(link -> link.getCampaign()).toList()
+                : campaignNonplayableCharacterRepository.findByCharacterId(characterId).stream()
+                        .map(link -> link.getCampaign()).toList();
+
+        return campaigns.stream().map(campaign -> toCampaignResponse(campaign, callerId)).toList();
+    }
+
+    @Override
+    @Transactional
+    public Character updateCharacterStatus(Long characterId, UpdateCharacterStatusRequest request, Long callerId) {
+        Character character = characterRepository.findById(characterId)
+                                                 .orElseThrow(() -> new NoSuchElementException("Character not found."));
+        requireOwner(character, callerId);
+        character.setStatus(request.status());
+        characterRepository.save(character);
+        return reloadCharacter(characterId);
+    }
+
+    private Character reloadCharacter(Long characterId) {
+        return nonplayableCharacterRepository.findById(characterId)
+                                             .<Character>map(npc -> npc)
+                                             .orElseGet(() -> playableCharacterRepository.findById(characterId)
+                                                     .orElseThrow(() -> new NoSuchElementException("Character not found.")));
+    }
+
+    private CampaignResponse toCampaignResponse(Campaign campaign, Long callerId) {
+        CampaignRole callerRole = campaignMemberRepository.findByCampaign_IdAndUser_Id(campaign.getId(), callerId)
+                                                          .map(member -> member.getRole())
+                                                          .orElse(null);
+        return new CampaignResponse(
+                campaign.getId(),
+                campaign.getTitle(),
+                campaign.getDescription(),
+                campaign.getCreatedOn(),
+                campaign.getUpdatedOn(),
+                campaign.getFinishedOn(),
+                callerRole
+        );
+    }
+
+    @Override
     public CharacterResponse toResponse(Character character) {
         List<CharacterClass> classes = characterClassRepository.findByCharacterId(character.getId());
         List<CharacterLanguage> languages = characterLanguageRepository.findByCharacterId(character.getId());
@@ -176,6 +247,23 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public List<CharacterResponse> toResponseList(List<? extends Character> characters) {
         return characters.stream().map(this::toResponse).toList();
+    }
+
+    @Override
+    public List<String> getCampaignNames(Long characterId) {
+        List<String> playableCampaigns = campaignPlayableCharacterRepository
+                .findByCharacterId(characterId)
+                .stream()
+                .map(link -> link.getCampaign().getTitle())
+                .toList();
+
+        List<String> nonplayableCampaigns = campaignNonplayableCharacterRepository
+                .findByCharacterId(characterId)
+                .stream()
+                .map(link -> link.getCampaign().getTitle())
+                .toList();
+
+        return Stream.concat(playableCampaigns.stream(), nonplayableCampaigns.stream()).toList();
     }
 
     private void populateSharedFields(

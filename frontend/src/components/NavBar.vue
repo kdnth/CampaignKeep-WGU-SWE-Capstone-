@@ -50,6 +50,12 @@ function handleLogout() {
       >
         My Campaigns
       </RouterLink>
+      <RouterLink
+        :to="{ name: 'characters' }"
+        class="text-neutral-300 hover:text-white transition-colors"
+      >
+        My Characters
+      </RouterLink>
     </div>
 
     <!-- AUTH -->

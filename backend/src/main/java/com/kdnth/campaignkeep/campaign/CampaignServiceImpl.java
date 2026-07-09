@@ -4,7 +4,9 @@ import com.kdnth.campaignkeep.base.AccessDeniedException;
 import com.kdnth.campaignkeep.base.ConflictException;
 import com.kdnth.campaignkeep.character.CharacterRepository;
 import com.kdnth.campaignkeep.character.NonplayableCharacter;
+import com.kdnth.campaignkeep.character.NonplayableCharacterRepository;
 import com.kdnth.campaignkeep.character.PlayableCharacter;
+import com.kdnth.campaignkeep.character.PlayableCharacterRepository;
 import com.kdnth.campaignkeep.user.User;
 import com.kdnth.campaignkeep.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +26,8 @@ public class CampaignServiceImpl implements CampaignService {
             campaignPlayableCharacterRepository;
     private final CampaignNonplayableCharacterRepository
             campaignNonplayableCharacterRepository;
+    private final PlayableCharacterRepository playableCharacterRepository;
+    private final NonplayableCharacterRepository nonplayableCharacterRepository;
 
 
     public CampaignServiceImpl(
@@ -31,13 +35,17 @@ public class CampaignServiceImpl implements CampaignService {
             CampaignMemberRepository campaignMemberRepository,
             UserRepository userRepository, CharacterRepository characterRepository,
             CampaignPlayableCharacterRepository campaignPlayableCharacterRepository,
-            CampaignNonplayableCharacterRepository campaignNonplayableCharacterRepository) {
+            CampaignNonplayableCharacterRepository campaignNonplayableCharacterRepository,
+            PlayableCharacterRepository playableCharacterRepository,
+            NonplayableCharacterRepository nonplayableCharacterRepository) {
         this.campaignRepository = campaignRepository;
         this.campaignMemberRepository = campaignMemberRepository;
         this.userRepository = userRepository;
         this.characterRepository = characterRepository;
         this.campaignPlayableCharacterRepository = campaignPlayableCharacterRepository;
         this.campaignNonplayableCharacterRepository = campaignNonplayableCharacterRepository;
+        this.playableCharacterRepository = playableCharacterRepository;
+        this.nonplayableCharacterRepository = nonplayableCharacterRepository;
     }
 
     @Override
@@ -241,13 +249,25 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public List<PlayableCharacter> getPlayableCharacters(Long campaignId, Long callerId) {
         requireMembership(campaignId, callerId);
-        return campaignPlayableCharacterRepository.findByCampaignId(campaignId).stream().map(link -> (PlayableCharacter) link.getCharacter()).toList();
+        List<Long> characterIds = campaignPlayableCharacterRepository.findByCampaignId(campaignId).stream()
+                .map(link -> link.getCharacter().getId())
+                .toList();
+        if (characterIds.isEmpty()) {
+            return List.of();
+        }
+        return playableCharacterRepository.findAllById(characterIds);
     }
 
     @Override
     public List<NonplayableCharacter> getNonplayableCharacters(Long campaignId, Long callerId) {
         requireMaster(campaignId, callerId);
-        return campaignNonplayableCharacterRepository.findByCampaignId(campaignId).stream().map(link -> (NonplayableCharacter) link.getCharacter()).toList();
+        List<Long> characterIds = campaignNonplayableCharacterRepository.findByCampaignId(campaignId).stream()
+                .map(link -> link.getCharacter().getId())
+                .toList();
+        if (characterIds.isEmpty()) {
+            return List.of();
+        }
+        return nonplayableCharacterRepository.findAllById(characterIds);
     }
 
     @Override

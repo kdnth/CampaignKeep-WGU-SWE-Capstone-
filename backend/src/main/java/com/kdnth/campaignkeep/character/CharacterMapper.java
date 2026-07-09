@@ -1,5 +1,7 @@
 package com.kdnth.campaignkeep.character;
 
+import org.hibernate.Hibernate;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,9 +13,12 @@ public final class CharacterMapper {
             List<CharacterClass> classes,
             List<CharacterLanguage> languages
     ) {
-        Long ownerId = character instanceof PlayableCharacter pc ? pc.getPlayer().getId() : ((NonplayableCharacter) character).getCreatedBy().getId();
+        Character resolved = (Character) Hibernate.unproxy(character);
+        Long ownerId = resolved instanceof PlayableCharacter pc
+                ? pc.getPlayer().getId()
+                : ((NonplayableCharacter) resolved).getCreatedBy().getId();
 
-        String characterType = character instanceof PlayableCharacter ? "PC" : "NPC";
+        String characterType = resolved instanceof PlayableCharacter ? "PC" : "NPC";
 
         return new CharacterResponse(
                 character.getId(),
@@ -26,17 +31,17 @@ public final class CharacterMapper {
                 character.getSubrace() != null ? character.getSubrace().getName() : null,
                 character.getBackground() != null ? character.getBackground().getId() : null,
                 character.getBackground() != null ? character.getBackground().getName() : null,
-                character.getStatus(),
-                character.getStrength(),
-                character.getDexterity(),
-                character.getConstitution(),
-                character.getIntelligence(),
-                character.getWisdom(),
-                character.getCharisma(),
-                character.getHitPoints(),
-                character.getArmorClass(),
-                character.getInitiativeBonus(),
-                character.getSpeed(),
+                resolved.getStatus(),
+                resolved.getStrength(),
+                resolved.getDexterity(),
+                resolved.getConstitution(),
+                resolved.getIntelligence(),
+                resolved.getWisdom(),
+                resolved.getCharisma(),
+                resolved.getHitPoints(),
+                resolved.getArmorClass(),
+                resolved.getInitiativeBonus(),
+                resolved.getSpeed(),
                 classes.stream().map(cc -> cc.getDndClass().getName()).collect(Collectors.toList()),
                 languages.stream().map(cl -> cl.getLanguage().getName()).collect(Collectors.toList()),
                 character.getCreatedOn(),

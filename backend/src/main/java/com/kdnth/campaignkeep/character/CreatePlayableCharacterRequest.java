@@ -15,7 +15,7 @@ public record CreatePlayableCharacterRequest(
         Long subraceId,
         Long backgroundId,
         @NotNull Long classId,
-        List<Long> languagesIds,
+        List<Long> languageIds,
 
         @NotNull @Min(1) @Max(30) Short strength,
         @NotNull @Min(1) @Max(30) Short dexterity,

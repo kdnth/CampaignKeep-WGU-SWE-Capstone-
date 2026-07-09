@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import CampaignMemberCard from '@/components/CampaignMemberCard.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import AddMemberModal from '@/components/AddMemberModal.vue'
+import { useAuthStore } from '@/stores/auth'
 import { useCampaignStore, type CampaignMemberResponse } from '@/stores/campaign'
 import ConfirmationModal from './ConfirmationModal.vue'
 
@@ -13,6 +14,7 @@ const props = defineProps<{
 }>()
 
 const campaignStore = useCampaignStore()
+const authStore = useAuthStore()
 
 const confirmTitle = computed(() => {
   switch (pendingAction.value?.type) {
@@ -66,13 +68,18 @@ function requestChangeRole(userId: number, newRole: 'master' | 'player') {
 
 async function handleConfirm() {
   if (!pendingAction.value) return
+  const targetUserId = pendingAction.value.userId
+  const actionType = pendingAction.value.type
   isConfirming.value = true
   try {
-    if (pendingAction.value.type === 'remove' || pendingAction.value.type === 'leave') {
-      await campaignStore.removeMember(props.campaignId, pendingAction.value.userId)
+    if (actionType === 'remove' || actionType === 'leave') {
+      await campaignStore.removeMember(props.campaignId, targetUserId)
     } else {
-      const role = pendingAction.value.type === 'promote' ? 'master' : 'player'
-      await campaignStore.changeRole(props.campaignId, pendingAction.value.userId, { role })
+      const role = actionType === 'promote' ? 'master' : 'player'
+      await campaignStore.changeRole(props.campaignId, targetUserId, { role })
+      if (targetUserId === authStore.userId && actionType === 'demote') {
+        await campaignStore.fetchCampaign(props.campaignId)
+      }
     }
     pendingAction.value = null
   } catch (err: unknown) {

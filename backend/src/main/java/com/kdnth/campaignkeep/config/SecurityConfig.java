@@ -2,7 +2,6 @@ package com.kdnth.campaignkeep.config;
 
 import com.kdnth.campaignkeep.security.JwtAuthEntryPoint;
 import com.kdnth.campaignkeep.security.JwtAuthFilter;
-import com.kdnth.campaignkeep.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

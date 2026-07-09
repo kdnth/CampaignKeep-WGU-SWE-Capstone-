@@ -41,8 +41,12 @@ public class CampaignMasterNote {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CampaignMasterNoteId that)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof CampaignMasterNoteId that)) {
+                return false;
+            }
             return Objects.equals(campaign, that.campaign) && Objects.equals(note, that.note);
         }
 

@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.kdnth.campaignkeep.character.Character;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -92,7 +93,7 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public void finishCampaign(Long campaignId, Long userId) {
         Campaign campaign = requireMaster(campaignId, userId).getCampaign();
-        campaign.setFinishedOn(java.time.LocalDateTime.now());
+        campaign.setFinishedOn(LocalDateTime.now());
         campaignRepository.save(campaign);
     }
 

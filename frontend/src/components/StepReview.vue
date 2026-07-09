@@ -5,6 +5,7 @@ import { useSubraceStore } from '@/stores/subrace'
 import { useDndClassStore } from '@/stores/dndClass'
 import { useBackgroundStore } from '@/stores/background'
 import { useLanguageStore } from '@/stores/language'
+import { useSpellStore } from '@/stores/spell'
 import type { CreatePlayableCharacterRequest } from '@/stores/character'
 import BaseButton from '@/components/BaseButton.vue'
 
@@ -20,6 +21,7 @@ const subraceStore = useSubraceStore()
 const dndClassStore = useDndClassStore()
 const backgroundStore = useBackgroundStore()
 const languageStore = useLanguageStore()
+const spellStore = useSpellStore()
 
 const raceName = computed(
   () => raceStore.races.find((r) => r.id === props.form.raceId)?.name ?? '-',
@@ -40,6 +42,13 @@ const languageNames = computed(
       .map((l) => l.name)
       .join(', ') || '-',
 )
+const spellNames = computed(() => {
+  const ids = props.form.spellIds ?? []
+  if (ids.length === 0) return '-'
+  return ids
+    .map((id) => spellStore.spells.find((s) => s.id === id)?.name ?? `Spell #${id}`)
+    .join(', ')
+})
 
 const abilities = [
   'strength',
@@ -63,6 +72,9 @@ const abilities = [
         <span class="text-neutral-300">Background:</span> {{ backgroundName }}
       </p>
       <p><span class="text-neutral-300">Languages:</span> {{ languageNames }}</p>
+      <p v-if="(form.spellIds?.length ?? 0) > 0">
+        <span class="text-neutral-300">Spells:</span> {{ spellNames }}
+      </p>
     </div>
 
     <div class="space-y-1">

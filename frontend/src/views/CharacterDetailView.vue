@@ -4,7 +4,9 @@ import BaseButton from '@/components/BaseButton.vue'
 import CharacterAvatar from '@/components/CharacterAvatar.vue'
 import CharacterStatusBadge from '@/components/character/CharacterStatusBadge.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import SpellFlipCard from '@/components/spells/SpellFlipCard.vue'
 import { useCharacterStore } from '@/stores/character'
+import { useSpellStore } from '@/stores/spell'
 import { formatDateStr } from '@/utils/dateUtil'
 import { isAxiosError } from 'axios'
 import { storeToRefs } from 'pinia'
@@ -25,12 +27,14 @@ const route = useRoute()
 const characterId = Number(route.params.id)
 
 const characterStore = useCharacterStore()
+const spellStore = useSpellStore()
 const { activeCharacter, characterCampaigns } = storeToRefs(characterStore)
 
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
 const showDeleteConfirm = ref(false)
 const isDeleting = ref(false)
+const isLoadingSpells = ref(false)
 
 const isPlayable = computed(() => activeCharacter.value?.characterType === 'PC')
 const typeLabel = computed(() => (isPlayable.value ? 'Playable Character' : 'NPC'))
@@ -38,6 +42,15 @@ const classLabel = computed(() => {
   if (!activeCharacter.value) return 'Not assigned'
   if (activeCharacter.value.characterType === 'NPC') return 'NPC'
   return activeCharacter.value.classNames[0] ?? 'Not assigned'
+})
+
+const showSpellbook = computed(() => {
+  if (!isPlayable.value || !activeCharacter.value) return false
+  const isWizard = activeCharacter.value.classNames.some(
+    (name) => name.toLowerCase() === 'wizard',
+  )
+  const isHighElf = activeCharacter.value.subraceName?.toLowerCase() === 'high elf'
+  return isWizard || isHighElf
 })
 
 function formatModifier(mod: number) {
@@ -65,8 +78,26 @@ async function handleDelete() {
 
 onMounted(async () => {
   try {
-    await characterStore.fetchCharacter(characterId)
-    await characterStore.fetchCharacterCampaigns(characterId)
+    await Promise.all([
+      characterStore.fetchCharacter(characterId),
+      characterStore.fetchCharacterCampaigns(characterId),
+    ])
+
+    const character = activeCharacter.value
+    if (character?.characterType === 'PC') {
+      const isWizard = character.classNames.some((name) => name.toLowerCase() === 'wizard')
+      const isHighElf = character.subraceName?.toLowerCase() === 'high elf'
+      if (isWizard || isHighElf) {
+        isLoadingSpells.value = true
+        try {
+          await spellStore.fetchCharacterSpells(characterId)
+        } catch {
+          // spellbook may be empty for new characters
+        } finally {
+          isLoadingSpells.value = false
+        }
+      }
+    }
   } catch (err: unknown) {
     if (isAxiosError(err)) {
       errorMessage.value = err.response?.data?.message ?? 'Failed to load character'
@@ -145,6 +176,25 @@ onMounted(async () => {
               {{ formatModifier(Math.floor((activeCharacter[ability] - 10) / 2)) }}
             </p>
           </div>
+        </div>
+      </section>
+
+      <section v-if="showSpellbook" class="rounded-2xl border-2 border-white p-6 text-white">
+        <h2 class="mb-4 text-xl">Spellbook</h2>
+        <p v-if="isLoadingSpells" class="text-neutral-300">Loading spellbook...</p>
+        <p v-else-if="spellStore.characterSpells.length === 0" class="text-neutral-400">
+          No spells in spellbook yet.
+        </p>
+        <div
+          v-else
+          class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-4"
+        >
+          <SpellFlipCard
+            v-for="spell in spellStore.characterSpells"
+            :key="spell.id"
+            :spell="spell"
+            mode="browse"
+          />
         </div>
       </section>
 

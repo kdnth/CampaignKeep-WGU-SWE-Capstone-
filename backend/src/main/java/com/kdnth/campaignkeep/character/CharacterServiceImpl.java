@@ -22,6 +22,7 @@ import com.kdnth.campaignkeep.race.Subrace;
 import com.kdnth.campaignkeep.race.SubraceAbilityPointBonus;
 import com.kdnth.campaignkeep.race.SubraceAbilityPointBonusRepository;
 import com.kdnth.campaignkeep.race.SubraceRepository;
+import com.kdnth.campaignkeep.spell.SpellService;
 import com.kdnth.campaignkeep.user.User;
 import com.kdnth.campaignkeep.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -51,6 +52,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final CampaignService campaignService;
     private final PlayableCharacterRepository playableCharacterRepository;
     private final NonplayableCharacterRepository nonplayableCharacterRepository;
+    private final SpellService spellService;
 
     public CharacterServiceImpl(RaceAbilityPointBonusRepository raceAbilityPointBonusRepository,
                                 SubraceAbilityPointBonusRepository subraceAbilityPointBonusRepository,
@@ -66,7 +68,8 @@ public class CharacterServiceImpl implements CharacterService {
                                 CampaignNonplayableCharacterRepository campaignNonplayableCharacterRepository,
                                 CampaignService campaignService,
                                 PlayableCharacterRepository playableCharacterRepository,
-                                NonplayableCharacterRepository nonplayableCharacterRepository) {
+                                NonplayableCharacterRepository nonplayableCharacterRepository,
+                                SpellService spellService) {
         this.raceAbilityPointBonusRepository = raceAbilityPointBonusRepository;
         this.subraceAbilityPointBonusRepository = subraceAbilityPointBonusRepository;
         this.userRepository = userRepository;
@@ -84,6 +87,7 @@ public class CharacterServiceImpl implements CharacterService {
         this.campaignService = campaignService;
         this.playableCharacterRepository = playableCharacterRepository;
         this.nonplayableCharacterRepository = nonplayableCharacterRepository;
+        this.spellService = spellService;
     }
 
     @Override
@@ -99,6 +103,8 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseThrow(() -> new AccessDeniedException("Background not found")) : null;
         DndClass dndClass = dndClassRepository.findById(request.classId())
                 .orElseThrow(() -> new AccessDeniedException("Class not found"));
+
+        spellService.validateCreationSpells(request.classId(), request.subraceId(), request.spellIds());
 
         PlayableCharacter character = new PlayableCharacter();
         character.setPlayer(player);
@@ -126,6 +132,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         assignClass(saved, dndClass);
         assignLanguages(saved, request.languageIds());
+        spellService.assignSpellsToCharacter(saved, request.spellIds());
 
         return saved;
     }

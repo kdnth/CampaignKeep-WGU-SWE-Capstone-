@@ -25,6 +25,7 @@ public record CreatePlayableCharacterRequest(
         @NotNull @Min(1) @Max(30) Short charisma,
 
         @NotNull @Min(1) Short hitPoints,
-        @NotNull @Min(0) Short armorClass
+        @NotNull @Min(0) Short armorClass,
+        List<Long> spellIds
         ) {
 }

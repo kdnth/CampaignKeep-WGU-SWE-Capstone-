@@ -11,7 +11,10 @@ import StepNameRaceClass from '@/components/StepNameRaceClass.vue'
 import StepSubrace from '@/components/StepSubrace.vue'
 import StepAbilityScores from '@/components/StepAbilityScores.vue'
 import StepBackgroundLanguages from '@/components/StepBackgroundLanguages.vue'
+import StepSpells from '@/components/StepSpells.vue'
 import StepReview from '@/components/StepReview.vue'
+
+const HIGH_ELF_SUBRACE_ID = 1
 
 const router = useRouter()
 const route = useRoute()
@@ -40,22 +43,39 @@ const form = ref<CreatePlayableCharacterRequest>({
   charisma: 0,
   hitPoints: 0,
   armorClass: 0,
+  spellIds: [],
 })
 
 const selectedRaceSubraces = computed(() => {
   return subraceStore.subraces.filter((r) => r.raceId === form.value.raceId)
 })
 
+const selectedClass = computed(() =>
+  dndClassStore.classes.find((c) => c.id === form.value.classId),
+)
+
+const needsSpellStep = computed(() => {
+  const isWizard = selectedClass.value?.index === 'wizard'
+  const isHighElf = form.value.subraceId === HIGH_ELF_SUBRACE_ID
+  return isWizard || isHighElf
+})
+
+const reviewStep = computed(() => (needsSpellStep.value ? 6 : 5))
+
 function nextStep() {
   if (currentStep.value === 1 && selectedRaceSubraces.value.length === 0) {
     currentStep.value = 3
+  } else if (currentStep.value === 4) {
+    currentStep.value = needsSpellStep.value ? 5 : reviewStep.value
   } else {
     currentStep.value++
   }
 }
 
 function prevStep() {
-  if (currentStep.value === 3 && selectedRaceSubraces.value.length === 0) {
+  if (currentStep.value === reviewStep.value) {
+    currentStep.value = needsSpellStep.value ? 5 : 4
+  } else if (currentStep.value === 3 && selectedRaceSubraces.value.length === 0) {
     currentStep.value = 1
   } else {
     currentStep.value--
@@ -111,7 +131,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div class="max-w-2xl mx-auto p-6">
+  <div class="mx-auto p-6" :class="currentStep === 5 && needsSpellStep ? 'max-w-6xl' : 'max-w-2xl'">
     <h1 class="text-2xl mb-4">Create Character</h1>
 
     <StepNameRaceClass v-if="currentStep === 1" v-model:form="form" @next="nextStep" />
@@ -134,8 +154,14 @@ onMounted(async () => {
       @next="nextStep"
       @back="prevStep"
     />
+    <StepSpells
+      v-else-if="currentStep === 5 && needsSpellStep"
+      :form="form"
+      @next="nextStep"
+      @back="prevStep"
+    />
     <StepReview
-      v-else-if="currentStep === 5"
+      v-else-if="currentStep === reviewStep"
       :form="form"
       :submitting="submitting"
       :error="errorMessage"

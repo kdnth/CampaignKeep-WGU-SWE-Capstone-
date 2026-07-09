@@ -1,0 +1,80 @@
+### Login (run auth register/login from campaigns.http first if token is missing)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "gm_tester",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+%}
+
+### List spells (triggers bulk sync on first call)
+GET {{baseUrl}}/api/spells
+Authorization: Bearer {{token}}
+
+> {%
+    if (response.body.length > 0) {
+        client.global.set("spellId", response.body[0].id);
+    }
+%}
+
+### Search spells
+GET {{baseUrl}}/api/spells?search=fire&school=evocation
+Authorization: Bearer {{token}}
+
+### Wizard-filtered spells
+GET {{baseUrl}}/api/spells?classIndex=wizard&maxLevel=1
+Authorization: Bearer {{token}}
+
+### Spell detail
+GET {{baseUrl}}/api/spells/{{spellId}}
+Authorization: Bearer {{token}}
+
+### Create wizard PC with spells (adjust spellIds after listing wizard cantrips/level-1 spells)
+POST {{baseUrl}}/api/characters/playable-characters
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Spell Tester",
+  "raceId": 3,
+  "subraceId": 1,
+  "backgroundId": 1,
+  "classId": 2,
+  "languageIds": [1, 2],
+  "strength": 8,
+  "dexterity": 14,
+  "constitution": 14,
+  "intelligence": 15,
+  "wisdom": 12,
+  "charisma": 10,
+  "hitPoints": 10,
+  "armorClass": 12,
+  "spellIds": []
+}
+
+> {%
+    if (response.status === 201) {
+        client.global.set("characterId", response.body.id);
+    }
+%}
+
+### Get character spellbook
+GET {{baseUrl}}/api/characters/{{characterId}}/spells
+Authorization: Bearer {{token}}
+
+### Add spell to character
+POST {{baseUrl}}/api/characters/{{characterId}}/spells
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "spellId": {{spellId}}
+}
+
+### Remove spell from character
+DELETE {{baseUrl}}/api/characters/{{characterId}}/spells/{{spellId}}
+Authorization: Bearer {{token}}

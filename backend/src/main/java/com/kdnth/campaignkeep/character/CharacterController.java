@@ -1,6 +1,9 @@
 package com.kdnth.campaignkeep.character;
 
 import com.kdnth.campaignkeep.campaign.CampaignResponse;
+import com.kdnth.campaignkeep.spell.AddSpellToCharacterRequest;
+import com.kdnth.campaignkeep.spell.SpellDetailResponse;
+import com.kdnth.campaignkeep.spell.SpellService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +18,17 @@ import static com.kdnth.campaignkeep.base.AuthUtil.getUserId;
 @RequestMapping("/api/characters")
 public class CharacterController {
     private final CharacterService characterService;
+    private final SpellService spellService;
     private final PlayableCharacterRepository playableCharacterRepository;
     private final NonplayableCharacterRepository nonplayableCharacterRepository;
 
 
     public CharacterController(CharacterService characterService,
+                               SpellService spellService,
                                PlayableCharacterRepository playableCharacterRepository,
                                NonplayableCharacterRepository nonplayableCharacterRepository) {
         this.characterService = characterService;
+        this.spellService = spellService;
         this.playableCharacterRepository = playableCharacterRepository;
         this.nonplayableCharacterRepository = nonplayableCharacterRepository;
     }
@@ -96,6 +102,37 @@ public class CharacterController {
         Long callerId = getUserId(authentication);
         Character character = characterService.updateCharacterStatus(id, request, callerId);
         return ResponseEntity.ok(characterService.toResponse(character));
+    }
+
+    @GetMapping("/{id}/spells")
+    public ResponseEntity<List<SpellDetailResponse>> getCharacterSpells(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.ok(spellService.getCharacterSpells(id, callerId));
+    }
+
+    @PostMapping("/{id}/spells")
+    public ResponseEntity<SpellDetailResponse> addSpellToCharacter(
+            @PathVariable Long id,
+            @Valid @RequestBody AddSpellToCharacterRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(spellService.addSpellToCharacter(id, request.spellId(), callerId));
+    }
+
+    @DeleteMapping("/{id}/spells/{spellId}")
+    public ResponseEntity<Void> removeSpellFromCharacter(
+            @PathVariable Long id,
+            @PathVariable Long spellId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        spellService.removeSpellFromCharacter(id, spellId, callerId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/mine/playable")

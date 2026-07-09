@@ -65,6 +65,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/spells',
+      name: 'spells',
+      component: () => import('@/views/SpellBrowserView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/test-component',
       name: 'testComponent',
       component: () => import('@/views/TestComponentView.vue'),

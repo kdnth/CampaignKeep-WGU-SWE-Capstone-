@@ -51,6 +51,7 @@ export interface CreatePlayableCharacterRequest {
   charisma: number
   hitPoints: number
   armorClass: number
+  spellIds?: number[]
 }
 
 export interface CreateNonplayableCharacterRequest {

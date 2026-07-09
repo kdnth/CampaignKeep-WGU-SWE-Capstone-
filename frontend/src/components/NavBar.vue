@@ -56,6 +56,12 @@ function handleLogout() {
       >
         My Characters
       </RouterLink>
+      <RouterLink
+        :to="{ name: 'spells' }"
+        class="text-neutral-300 hover:text-white transition-colors"
+      >
+        Spells
+      </RouterLink>
     </div>
 
     <!-- AUTH -->

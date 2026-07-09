@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton.vue'
-import BaseInput from '@/components/BaseInput.vue'
 import { ref, watch } from 'vue'
 
 const props = withDefaults(

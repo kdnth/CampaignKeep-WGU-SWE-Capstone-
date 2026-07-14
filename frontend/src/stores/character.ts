@@ -30,6 +30,8 @@ export interface CharacterResponse {
   armorClass: number
   initiativeBonus: number
   speed: number
+  gold: number
+  startingEquipmentChosen: boolean
   classNames: string[]
   languageNames: string[]
   createdOn: string

@@ -42,6 +42,8 @@ public final class CharacterMapper {
                 resolved.getArmorClass(),
                 resolved.getInitiativeBonus(),
                 resolved.getSpeed(),
+                resolved.getGold() != null ? resolved.getGold() : 0,
+                Boolean.TRUE.equals(resolved.getStartingEquipmentChosen()),
                 classes.stream().map(cc -> cc.getDndClass().getName()).collect(Collectors.toList()),
                 languages.stream().map(cl -> cl.getLanguage().getName()).collect(Collectors.toList()),
                 character.getCreatedOn(),

@@ -72,5 +72,11 @@ public abstract class Character extends Auditable {
     @Column(nullable = false)
     private Short speed;
 
+    @Column(nullable = false)
+    private Integer gold = 0;
+
+    @Column(name = "starting_equipment_chosen", nullable = false)
+    private Boolean startingEquipmentChosen = false;
+
     public abstract boolean canBeEditedBy(Long userId);
 }

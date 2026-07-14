@@ -4,6 +4,7 @@ import com.kdnth.campaignkeep.campaign.CampaignResponse;
 import com.kdnth.campaignkeep.spell.AddSpellToCharacterRequest;
 import com.kdnth.campaignkeep.spell.SpellDetailResponse;
 import com.kdnth.campaignkeep.spell.SpellService;
+import com.kdnth.campaignkeep.item.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +20,19 @@ import static com.kdnth.campaignkeep.base.AuthUtil.getUserId;
 public class CharacterController {
     private final CharacterService characterService;
     private final SpellService spellService;
+    private final InventoryService inventoryService;
     private final PlayableCharacterRepository playableCharacterRepository;
     private final NonplayableCharacterRepository nonplayableCharacterRepository;
 
 
     public CharacterController(CharacterService characterService,
                                SpellService spellService,
+                               InventoryService inventoryService,
                                PlayableCharacterRepository playableCharacterRepository,
                                NonplayableCharacterRepository nonplayableCharacterRepository) {
         this.characterService = characterService;
         this.spellService = spellService;
+        this.inventoryService = inventoryService;
         this.playableCharacterRepository = playableCharacterRepository;
         this.nonplayableCharacterRepository = nonplayableCharacterRepository;
     }
@@ -133,6 +137,78 @@ public class CharacterController {
         Long callerId = getUserId(authentication);
         spellService.removeSpellFromCharacter(id, spellId, callerId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/inventory")
+    public ResponseEntity<CharacterInventoryResponse> getCharacterInventory(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.ok(inventoryService.getInventory(id, callerId));
+    }
+
+    @PostMapping("/{id}/starting-equipment")
+    public ResponseEntity<CharacterInventoryResponse> submitStartingEquipment(
+            @PathVariable Long id,
+            @Valid @RequestBody SubmitStartingEquipmentRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inventoryService.submitStartingEquipment(id, request, callerId));
+    }
+
+    @PostMapping("/{id}/starting-pack")
+    public ResponseEntity<CharacterInventoryResponse> submitStartingPack(
+            @PathVariable Long id,
+            @Valid @RequestBody SubmitStartingPackRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inventoryService.submitStartingPack(id, request, callerId));
+    }
+
+    @PatchMapping("/{id}/inventory/{inventoryItemId}")
+    public ResponseEntity<CharacterInventoryResponse> updateInventoryItem(
+            @PathVariable Long id,
+            @PathVariable Long inventoryItemId,
+            @Valid @RequestBody UpdateInventoryItemRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.ok(inventoryService.updateInventoryItem(id, inventoryItemId, request, callerId));
+    }
+
+    @DeleteMapping("/{id}/inventory/{inventoryItemId}")
+    public ResponseEntity<Void> removeInventoryItem(
+            @PathVariable Long id,
+            @PathVariable Long inventoryItemId,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        inventoryService.removeInventoryItem(id, inventoryItemId, callerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/gold")
+    public ResponseEntity<CharacterInventoryResponse> updateGold(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateGoldRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.ok(inventoryService.updateGold(id, request, callerId));
+    }
+
+    @GetMapping("/{id}/attacks")
+    public ResponseEntity<List<CharacterAttackResponse>> getCharacterAttacks(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.ok(inventoryService.getAttacks(id, callerId));
     }
 
     @GetMapping("/mine/playable")

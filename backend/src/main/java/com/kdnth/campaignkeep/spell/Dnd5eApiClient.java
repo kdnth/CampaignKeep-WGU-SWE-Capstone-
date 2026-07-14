@@ -1,5 +1,6 @@
 package com.kdnth.campaignkeep.spell;
 
+import com.kdnth.campaignkeep.item.Dnd5eEquipmentResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -17,7 +18,7 @@ public class Dnd5eApiClient {
             @Value("${dnd5eapi.base-url:https://www.dnd5eapi.co/api/2014}") String baseUrl,
             RestClient.Builder restClientBuilder
     ) {
-        this.restClient = restClientBuilder
+        restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .build();
     }
@@ -53,5 +54,25 @@ public class Dnd5eApiClient {
                 .uri("/spells/{apiIndex}", apiIndex)
                 .retrieve()
                 .body(Dnd5eSpellResponse.class);
+    }
+
+    public Dnd5eEquipmentResponse fetchEquipment(String apiIndex) {
+        return restClient.get()
+                .uri("/equipment/{apiIndex}", apiIndex)
+                .retrieve()
+                .body(Dnd5eEquipmentResponse.class);
+    }
+
+    public List<String> fetchAllEquipmentIndices() {
+        Dnd5eApiIndexList response = restClient.get()
+                .uri("/equipment")
+                .retrieve()
+                .body(Dnd5eApiIndexList.class);
+        if (response == null || response.results() == null) {
+            return List.of();
+        }
+        return response.results().stream()
+                .map(Dnd5eApiIndexItem::index)
+                .toList();
     }
 }

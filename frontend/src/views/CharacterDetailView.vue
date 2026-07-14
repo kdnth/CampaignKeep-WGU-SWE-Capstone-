@@ -5,13 +5,16 @@ import CharacterAvatar from '@/components/CharacterAvatar.vue'
 import CharacterStatusBadge from '@/components/character/CharacterStatusBadge.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
 import SpellFlipCard from '@/components/spells/SpellFlipCard.vue'
+import ItemsListPanel from '@/components/equipment/ItemsListPanel.vue'
 import { useCharacterStore } from '@/stores/character'
 import { useSpellStore } from '@/stores/spell'
+import { useInventoryStore } from '@/stores/inventory'
 import { formatDateStr } from '@/utils/dateUtil'
 import { isAxiosError } from 'axios'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import StatLabel from '@/components/character/StatLabel.vue'
 
 const abilities = [
   'strength',
@@ -28,6 +31,7 @@ const characterId = Number(route.params.id)
 
 const characterStore = useCharacterStore()
 const spellStore = useSpellStore()
+const inventoryStore = useInventoryStore()
 const { activeCharacter, characterCampaigns } = storeToRefs(characterStore)
 
 const isLoading = ref(true)
@@ -35,6 +39,15 @@ const errorMessage = ref<string | null>(null)
 const showDeleteConfirm = ref(false)
 const isDeleting = ref(false)
 const isLoadingSpells = ref(false)
+const isLoadingInventory = ref(false)
+
+const inventoryEntries = computed(() =>
+  (inventoryStore.inventory?.items ?? []).map((entry) => ({
+    key: entry.inventoryItemId,
+    item: entry.item,
+    quantity: entry.quantity,
+  })),
+)
 
 const isPlayable = computed(() => activeCharacter.value?.characterType === 'PC')
 const typeLabel = computed(() => (isPlayable.value ? 'Playable Character' : 'NPC'))
@@ -46,9 +59,7 @@ const classLabel = computed(() => {
 
 const showSpellbook = computed(() => {
   if (!isPlayable.value || !activeCharacter.value) return false
-  const isWizard = activeCharacter.value.classNames.some(
-    (name) => name.toLowerCase() === 'wizard',
-  )
+  const isWizard = activeCharacter.value.classNames.some((name) => name.toLowerCase() === 'wizard')
   const isHighElf = activeCharacter.value.subraceName?.toLowerCase() === 'high elf'
   return isWizard || isHighElf
 })
@@ -82,6 +93,15 @@ onMounted(async () => {
       characterStore.fetchCharacter(characterId),
       characterStore.fetchCharacterCampaigns(characterId),
     ])
+
+    isLoadingInventory.value = true
+    try {
+      await inventoryStore.fetchInventory(characterId)
+    } catch {
+      // inventory may be empty
+    } finally {
+      isLoadingInventory.value = false
+    }
 
     const character = activeCharacter.value
     if (character?.characterType === 'PC') {
@@ -128,42 +148,29 @@ onMounted(async () => {
         <div class="flex flex-1 flex-wrap items-start justify-between gap-4">
           <div>
             <p class="text-sm uppercase tracking-wide text-purple-400">{{ typeLabel }}</p>
-            <h1 class="text-3xl text-white">{{ activeCharacter.name }}</h1>
+            <h1 class="text-3xl text-white">
+              {{ activeCharacter.name }}
+            </h1>
             <p class="text-neutral-300 capitalize">
               {{ activeCharacter.raceName }}
               <span v-if="activeCharacter.subraceName">({{ activeCharacter.subraceName }})</span>
+              <span> • {{ activeCharacter.classNames.join(', ') }}</span>
+              <span> • {{ activeCharacter.backgroundName }}</span>
             </p>
+            <p class="text-neutral-300 capitalize italic">
+              {{ activeCharacter.languageNames.join(', ') || '' }}
+            </p>
+            <div
+              class="text-md my-4 py-2 border-t-2 border-white font-bold flex justify-between items-start"
+            >
+              <StatLabel stat="hp" :value="activeCharacter.hitPoints"> </StatLabel>
+              <StatLabel stat="ac" :value="activeCharacter.armorClass" />
+              <StatLabel stat="initiative" :value="activeCharacter.initiativeBonus" />
+              <StatLabel stat="speed" :value="activeCharacter.speed" />
+            </div>
           </div>
           <CharacterStatusBadge :status="activeCharacter.status" />
         </div>
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <section class="space-y-2 rounded-2xl border-2 border-white p-6 text-white">
-          <h2 class="text-xl">Identity</h2>
-          <p v-if="isPlayable && activeCharacter.classNames.length">
-            <span class="text-neutral-300">Class:</span>
-            {{ activeCharacter.classNames.join(', ') }}
-          </p>
-          <p v-if="activeCharacter.backgroundName">
-            <span class="text-neutral-300">Background:</span> {{ activeCharacter.backgroundName }}
-          </p>
-          <p>
-            <span class="text-neutral-300">Languages:</span>
-            {{ activeCharacter.languageNames.join(', ') || 'None' }}
-          </p>
-        </section>
-
-        <section class="space-y-2 rounded-2xl border-2 border-white p-6 text-white">
-          <h2 class="text-xl">Combat</h2>
-          <p><span class="text-neutral-300">Hit Points:</span> {{ activeCharacter.hitPoints }}</p>
-          <p><span class="text-neutral-300">Armor Class:</span> {{ activeCharacter.armorClass }}</p>
-          <p>
-            <span class="text-neutral-300">Initiative:</span>
-            {{ formatModifier(activeCharacter.initiativeBonus) }}
-          </p>
-          <p><span class="text-neutral-300">Speed:</span> {{ activeCharacter.speed }} ft.</p>
-        </section>
       </div>
 
       <section class="rounded-2xl border-2 border-white p-6 text-white">
@@ -179,16 +186,31 @@ onMounted(async () => {
         </div>
       </section>
 
+      <section class="rounded-2xl border-2 border-white p-6 text-white">
+        <h2 class="mb-4 text-xl">Inventory</h2>
+        <p v-if="isLoadingInventory" class="text-neutral-300">Loading inventory...</p>
+        <ItemsListPanel
+          v-else
+          :entries="inventoryEntries"
+          empty-message="No items in inventory."
+        />
+        <p
+          v-if="inventoryStore.inventory"
+          class="mt-3 text-sm text-neutral-400"
+        >
+          Weight: {{ inventoryStore.inventory.totalWeight }} /
+          {{ inventoryStore.inventory.carryingCapacity }} lb. · Gold:
+          {{ inventoryStore.inventory.gold }} gp
+        </p>
+      </section>
+
       <section v-if="showSpellbook" class="rounded-2xl border-2 border-white p-6 text-white">
         <h2 class="mb-4 text-xl">Spellbook</h2>
         <p v-if="isLoadingSpells" class="text-neutral-300">Loading spellbook...</p>
         <p v-else-if="spellStore.characterSpells.length === 0" class="text-neutral-400">
           No spells in spellbook yet.
         </p>
-        <div
-          v-else
-          class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-4"
-        >
+        <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-4">
           <SpellFlipCard
             v-for="spell in spellStore.characterSpells"
             :key="spell.id"

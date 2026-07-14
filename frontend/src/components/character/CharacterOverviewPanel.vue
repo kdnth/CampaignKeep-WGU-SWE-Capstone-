@@ -5,6 +5,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import { useCurrentHp } from '@/composables/useCurrentHp'
 import { useCharacterStatusSyncFromProps } from '@/composables/useCharacterStatusSync'
 import type { CharacterResponse } from '@/stores/character'
+import { useInventoryStore } from '@/stores/inventory'
 import { resolveDisplayStatus } from '@/utils/characterStatus'
 import { isAxiosError } from 'axios'
 import { computed, ref } from 'vue'
@@ -25,9 +26,21 @@ const props = withDefaults(
     campaignId?: number
     useLocalHpForStatus?: boolean
     editableHp?: boolean
+    editableGold?: boolean
+    gold?: number
   }>(),
-  { showStats: false, useLocalHpForStatus: false, editableHp: false },
+  { showStats: false, useLocalHpForStatus: false, editableHp: false, editableGold: false, gold: 0 },
 )
+
+const emit = defineEmits<{
+  goldUpdated: [gold: number]
+}>()
+
+const inventoryStore = useInventoryStore()
+const isEditingGold = ref(false)
+const goldInput = ref(0)
+const goldError = ref<string | null>(null)
+const isUpdatingGold = ref(false)
 
 const statusError = ref<string | null>(null)
 
@@ -102,6 +115,30 @@ async function handleRevive() {
         : 'Failed to update status'
   }
 }
+
+function startGoldEdit() {
+  if (!props.editableGold) return
+  goldInput.value = props.gold
+  isEditingGold.value = true
+  goldError.value = null
+}
+
+async function saveGold() {
+  if (!props.editableGold) return
+  goldError.value = null
+  isUpdatingGold.value = true
+  try {
+    await inventoryStore.updateGold(props.character.id, goldInput.value)
+    emit('goldUpdated', goldInput.value)
+    isEditingGold.value = false
+  } catch (err: unknown) {
+    goldError.value = isAxiosError(err)
+      ? (err.response?.data?.message ?? err.message)
+      : 'Failed to update gold'
+  } finally {
+    isUpdatingGold.value = false
+  }
+}
 </script>
 
 <template>
@@ -123,6 +160,32 @@ async function handleRevive() {
           </p>
         </div>
         <CharacterStatusBadge :status="displayStatus" />
+      </div>
+
+      <div
+        v-if="editableGold"
+        class="flex items-center gap-2 text-sm"
+      >
+        <span class="text-neutral-400">Gold:</span>
+        <template v-if="isEditingGold">
+          <input
+            v-model.number="goldInput"
+            type="number"
+            min="0"
+            class="w-24 rounded-lg px-2 py-1 text-black"
+            @keyup.enter="saveGold"
+          />
+          <BaseButton variant="primary" :loading="isUpdatingGold" @click="saveGold">Save</BaseButton>
+        </template>
+        <button
+          v-else
+          type="button"
+          class="font-medium text-yellow-300 hover:underline"
+          @click="startGoldEdit"
+        >
+          {{ gold }} gp
+        </button>
+        <p v-if="goldError" class="text-red-400">{{ goldError }}</p>
       </div>
 
       <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">

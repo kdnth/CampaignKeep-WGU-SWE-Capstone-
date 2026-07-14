@@ -36,8 +36,11 @@ public class CharacterSpell {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CharacterSpellId that)) return false;
+            if (this == o) {return true;
+            }
+            if (!(o instanceof CharacterSpellId that)) {
+                return false;
+            }
             return Objects.equals(character, that.character) && Objects.equals(spell, that.spell);
         }
 

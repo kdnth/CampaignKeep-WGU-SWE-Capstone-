@@ -114,14 +114,15 @@ final class SpellMapper {
     }
 
     private static String formatRangeDisplay(Spell spell) {
-        return switch (spell.getRangeType()) {
-            case self -> "Self";
-            case touch -> "Touch";
-            case sight -> "Sight";
-            case unlimited -> "Unlimited";
-            case ranged -> spell.getRangeFeet() != null ? spell.getRangeFeet() + " feet" : "Ranged";
-            case special -> "Special";
-        };
+        SpellRangeType rangeType = spell.getRangeType();
+        if (rangeType == null) {
+            return SpellRangeType.special.getDisplayName();
+        }
+        // Prefer if over enum switch: javac's SpellMapper$1 switch-map breaks under DevTools reloads.
+        if (rangeType == SpellRangeType.ranged) {
+            return spell.getRangeFeet() != null ? spell.getRangeFeet() + " feet" : rangeType.getDisplayName();
+        }
+        return rangeType.getDisplayName();
     }
 
     private static String joinLines(List<String> lines) {

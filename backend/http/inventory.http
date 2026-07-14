@@ -1,0 +1,83 @@
+### Inventory API — run after auth from auth.http (sets {{token}})
+
+@baseUrl = http://localhost:8080
+@characterId = 1
+@campaignId = 1
+@classId = 1
+
+### Get starting equipment options for Fighter
+GET {{baseUrl}}/api/classes/{{classId}}/starting-equipment-options
+Authorization: Bearer {{token}}
+
+### Get character inventory
+GET {{baseUrl}}/api/characters/{{characterId}}/inventory
+Authorization: Bearer {{token}}
+
+### Submit starting equipment
+POST {{baseUrl}}/api/characters/{{characterId}}/starting-equipment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "weaponItemId": 4,
+  "armorItemId": 9,
+  "shieldItemId": 20
+}
+
+### Equip item (set inventoryItemId from inventory response)
+PATCH {{baseUrl}}/api/characters/{{characterId}}/inventory/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "equipToSlot": "main_hand"
+}
+
+### Unequip item
+PATCH {{baseUrl}}/api/characters/{{characterId}}/inventory/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "unequip": true
+}
+
+### Update gold
+PATCH {{baseUrl}}/api/characters/{{characterId}}/gold
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "gold": 25
+}
+
+### Get attacks
+GET {{baseUrl}}/api/characters/{{characterId}}/attacks
+Authorization: Bearer {{token}}
+
+### List campaign items (reference + homebrew)
+GET {{baseUrl}}/api/campaigns/{{campaignId}}/items
+Authorization: Bearer {{token}}
+
+### Create campaign item (master only)
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "itemType": "gear",
+  "name": "Potion of Healing",
+  "description": "Restores 2d4+2 hit points.",
+  "value": 50,
+  "weight": 1
+}
+
+### Grant item to PC (master only)
+POST {{baseUrl}}/api/campaigns/{{campaignId}}/playable-characters/{{characterId}}/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "itemId": 41,
+  "quantity": 1
+}

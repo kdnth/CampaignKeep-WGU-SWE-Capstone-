@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 export interface TabItem {
   id: string
@@ -13,6 +13,13 @@ const props = defineProps<{
 }>()
 
 const activeTab = ref(props.defaultTab ?? props.tabs[0]?.id ?? '')
+
+watch(
+  () => props.defaultTab,
+  (tab) => {
+    if (tab) activeTab.value = tab
+  },
+)
 </script>
 
 <template>

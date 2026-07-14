@@ -83,23 +83,22 @@ async function handleSubmit() {
           <p v-if="errorMessage" class="text-red-600 mx-0.5 pt-2">{{ errorMessage }}</p>
 
           <!-- submit -->
-          <div class="flex justify-center">
+          <div class="flex justify-between py-8">
+            <!-- Register link -->
+            <p class="text-white my-4 flex gap-2">
+              Don't have an account?
+              <RouterLink
+                class="text-white underline hover:text-neutral-400"
+                :to="{ name: 'register' }"
+              >
+                Create one</RouterLink
+              >
+            </p>
             <BaseButton variant="submit" type="submit" :loading="isLoading">
               {{ isLoading ? 'Logging in...' : 'Login' }}
             </BaseButton>
           </div>
         </form>
-
-        <!-- Register link -->
-        <p class="text-white my-4 flex gap-2">
-          Don't have an account?
-          <RouterLink
-            class="text-white underline hover:text-neutral-400"
-            :to="{ name: 'register' }"
-          >
-            Create one</RouterLink
-          >
-        </p>
       </div>
     </div>
   </div>

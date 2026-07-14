@@ -25,6 +25,8 @@ public record CharacterResponse(
         Short armorClass,
         Short initiativeBonus,
         Short speed,
+        Integer gold,
+        Boolean startingEquipmentChosen,
         List<String> classNames,
         List<String> languageNames,
         LocalDateTime createdOn,

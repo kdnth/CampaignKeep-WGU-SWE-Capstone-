@@ -12,7 +12,9 @@ import StepSubrace from '@/components/StepSubrace.vue'
 import StepAbilityScores from '@/components/StepAbilityScores.vue'
 import StepBackgroundLanguages from '@/components/StepBackgroundLanguages.vue'
 import StepSpells from '@/components/StepSpells.vue'
+import StepStartingEquipment from '@/components/equipment/StepStartingEquipment.vue'
 import StepReview from '@/components/StepReview.vue'
+import { useInventoryStore } from '@/stores/inventory'
 
 const HIGH_ELF_SUBRACE_ID = 1
 
@@ -23,10 +25,17 @@ const campaignStore = useCampaignStore()
 const raceStore = useRaceStore()
 const subraceStore = useSubraceStore()
 const dndClassStore = useDndClassStore()
+const inventoryStore = useInventoryStore()
 
 const currentStep = ref(1)
 const submitting = ref(false)
 const errorMessage = ref<string | null>(null)
+
+const startingEquipment = ref({
+  weaponItemId: null as number | null,
+  armorItemId: null as number | null,
+  shieldItemId: null as number | null,
+})
 
 const form = ref<CreatePlayableCharacterRequest>({
   name: '',
@@ -60,13 +69,14 @@ const needsSpellStep = computed(() => {
   return isWizard || isHighElf
 })
 
-const reviewStep = computed(() => (needsSpellStep.value ? 6 : 5))
+const reviewStep = computed(() => (needsSpellStep.value ? 7 : 6))
+const equipmentStep = computed(() => (needsSpellStep.value ? 6 : 5))
 
 function nextStep() {
   if (currentStep.value === 1 && selectedRaceSubraces.value.length === 0) {
     currentStep.value = 3
   } else if (currentStep.value === 4) {
-    currentStep.value = needsSpellStep.value ? 5 : reviewStep.value
+    currentStep.value = needsSpellStep.value ? 5 : equipmentStep.value
   } else {
     currentStep.value++
   }
@@ -74,6 +84,8 @@ function nextStep() {
 
 function prevStep() {
   if (currentStep.value === reviewStep.value) {
+    currentStep.value = equipmentStep.value
+  } else if (currentStep.value === equipmentStep.value) {
     currentStep.value = needsSpellStep.value ? 5 : 4
   } else if (currentStep.value === 3 && selectedRaceSubraces.value.length === 0) {
     currentStep.value = 1
@@ -105,6 +117,13 @@ async function handleSubmit() {
 
   try {
     const character = await characterStore.createPlayableCharacter(form.value)
+    if (startingEquipment.value.weaponItemId) {
+      await inventoryStore.submitStartingEquipment(character.id, {
+        weaponItemId: startingEquipment.value.weaponItemId,
+        armorItemId: startingEquipment.value.armorItemId,
+        shieldItemId: startingEquipment.value.shieldItemId,
+      })
+    }
     if (attachCampaignId.value) {
       await campaignStore.addPlayableCharacter(attachCampaignId.value, character.id)
       router.push({ name: 'campaignDetail', params: { id: attachCampaignId.value } })
@@ -157,6 +176,14 @@ onMounted(async () => {
     <StepSpells
       v-else-if="currentStep === 5 && needsSpellStep"
       :form="form"
+      @next="nextStep"
+      @back="prevStep"
+    />
+    <StepStartingEquipment
+      v-else-if="currentStep === equipmentStep"
+      v-model="startingEquipment"
+      :class-id="form.classId"
+      :strength="form.strength"
       @next="nextStep"
       @back="prevStep"
     />

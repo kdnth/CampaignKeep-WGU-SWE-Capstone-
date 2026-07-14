@@ -4,7 +4,6 @@ import com.kdnth.campaignkeep.base.AccessDeniedException;
 import com.kdnth.campaignkeep.campaign.CampaignMemberRepository;
 import com.kdnth.campaignkeep.campaign.CampaignNonplayableCharacterRepository;
 import com.kdnth.campaignkeep.campaign.CampaignPlayableCharacterRepository;
-import com.kdnth.campaignkeep.character.Character;
 import com.kdnth.campaignkeep.character.CharacterRepository;
 import com.kdnth.campaignkeep.character.PlayableCharacter;
 import com.kdnth.campaignkeep.dndclass.DndClass;

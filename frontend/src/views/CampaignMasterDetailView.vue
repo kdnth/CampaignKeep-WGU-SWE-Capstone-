@@ -10,6 +10,8 @@ import ConfirmationModal from '@/components/ConfirmationModal.vue'
 import MasterNotesPanel from '@/components/notes/MasterNotesPanel.vue'
 import MasterSessionLogsPanel from '@/components/sessionlogs/MasterSessionLogsPanel.vue'
 import MasterSpellsPanel from '@/components/spells/MasterSpellsPanel.vue'
+import GrantItemPanel from '@/components/equipment/GrantItemPanel.vue'
+import CampaignItemsPanel from '@/components/equipment/CampaignItemsPanel.vue'
 import { useCampaignStore } from '@/stores/campaign'
 import { isAxiosError } from 'axios'
 import { storeToRefs } from 'pinia'
@@ -64,6 +66,7 @@ const tabs = [
   { id: 'notes', label: 'Notes' },
   { id: 'session-logs', label: 'Session Logs' },
   { id: 'members', label: 'Campaign Members' },
+  { id: 'campaign-items', label: 'Campaign Items' },
 ]
 
 function requestDelete() {
@@ -126,12 +129,15 @@ onMounted(async () => {
             No player characters in this campaign.
           </div>
           <div v-else class="grid gap-4">
-            <CharacterOverviewPanel
-              v-for="character in playableCharacters"
-              :key="character.id"
-              :character="character"
-              show-stats
-            />
+            <div v-for="character in playableCharacters" :key="character.id">
+              <CharacterOverviewPanel :character="character" show-stats />
+              <GrantItemPanel
+                :campaign-id="campaignId"
+                :character-id="character.id"
+                :character-name="character.name"
+                character-type="PC"
+              />
+            </div>
           </div>
         </template>
 
@@ -141,14 +147,20 @@ onMounted(async () => {
             No NPCs in this campaign.
           </div>
           <div v-else class="mt-4 grid gap-4">
-            <CharacterOverviewPanel
-              v-for="character in nonplayableCharacters"
-              :key="character.id"
-              :character="character"
-              show-stats
-              :campaign-id="campaignId"
-              editable-hp
-            />
+            <div v-for="character in nonplayableCharacters" :key="character.id">
+              <CharacterOverviewPanel
+                :character="character"
+                show-stats
+                :campaign-id="campaignId"
+                editable-hp
+              />
+              <GrantItemPanel
+                :campaign-id="campaignId"
+                :character-id="character.id"
+                :character-name="character.name"
+                character-type="NPC"
+              />
+            </div>
           </div>
         </template>
 
@@ -167,15 +179,14 @@ onMounted(async () => {
         <template #members>
           <CompactCampaignMemberList :campaign-id="campaignId" :members="members" />
         </template>
+        <template #campaign-items>
+          <CampaignItemsPanel :campaign-id="campaignId" />
+        </template>
       </BaseTabPanel>
 
       <div class="flex gap-2">
         <BaseButton variant="danger" @click="requestDelete">Delete Campaign</BaseButton>
-        <BaseButton
-          v-if="!activeCampaign.finishedOn"
-          variant="primary"
-          @click="requestFinish"
-        >
+        <BaseButton v-if="!activeCampaign.finishedOn" variant="primary" @click="requestFinish">
           Finish Campaign
         </BaseButton>
       </div>

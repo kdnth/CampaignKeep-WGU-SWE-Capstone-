@@ -1,10 +1,20 @@
 package com.kdnth.campaignkeep.spell;
 
+import lombok.Getter;
+
+@Getter
 public enum SpellRangeType {
-    self,
-    touch,
-    ranged,
-    special,
-    sight,
-    unlimited
+    self("Self"),
+    touch("Touch"),
+    ranged("Ranged"),
+    special("Special"),
+    sight("Sight"),
+    unlimited("Unlimited");
+
+    private final String displayName;
+
+    SpellRangeType(String displayName) {
+        this.displayName = displayName;
+    }
+
 }

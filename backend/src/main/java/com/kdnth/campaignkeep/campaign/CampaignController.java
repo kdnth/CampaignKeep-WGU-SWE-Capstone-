@@ -5,6 +5,9 @@ import com.kdnth.campaignkeep.character.CharacterResponse;
 import com.kdnth.campaignkeep.character.CharacterService;
 import com.kdnth.campaignkeep.character.NonplayableCharacter;
 import com.kdnth.campaignkeep.character.PlayableCharacter;
+import com.kdnth.campaignkeep.item.CharacterInventoryResponse;
+import com.kdnth.campaignkeep.item.GrantItemRequest;
+import com.kdnth.campaignkeep.item.InventoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +30,16 @@ import static com.kdnth.campaignkeep.base.AuthUtil.getUserId;
 public class CampaignController {
     private final CampaignService campaignService;
     private final CharacterService characterService;
+    private final InventoryService inventoryService;
 
-    public CampaignController(CampaignService campaignService, CharacterService characterService) {
+    public CampaignController(
+            CampaignService campaignService,
+            CharacterService characterService,
+            InventoryService inventoryService
+    ) {
         this.campaignService = campaignService;
         this.characterService = characterService;
+        this.inventoryService = inventoryService;
     }
 
     @PostMapping
@@ -161,6 +170,30 @@ public class CampaignController {
         List<PlayableCharacter> characters = campaignService.getPlayableCharacters(campaignId, callerId);
         return ResponseEntity.ok(characterService.toResponseList(characters));
 
+    }
+
+    @PostMapping("/{campaignId}/playable-characters/{characterId}/items")
+    public ResponseEntity<CharacterInventoryResponse> grantItemToPlayableCharacter(
+            @PathVariable Long campaignId,
+            @PathVariable Long characterId,
+            @Valid @RequestBody GrantItemRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inventoryService.grantItem(campaignId, characterId, request, callerId));
+    }
+
+    @PostMapping("/{campaignId}/nonplayable-characters/{characterId}/items")
+    public ResponseEntity<CharacterInventoryResponse> grantItemToNonplayableCharacter(
+            @PathVariable Long campaignId,
+            @PathVariable Long characterId,
+            @Valid @RequestBody GrantItemRequest request,
+            Authentication authentication
+    ) {
+        Long callerId = getUserId(authentication);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inventoryService.grantItem(campaignId, characterId, request, callerId));
     }
 
     @PostMapping("/{campaignId}/nonplayable-characters/{characterId}")

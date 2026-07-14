@@ -72,7 +72,7 @@ Each plan row is one executable `@Test` method. Columns describe intent, inputs/
 
 
 ##### Initial Failure Run
-![contextLoads Failure](/screenshots/contextLoads-FAIL.png)
+![contextLoads Failure](./screenshots/contextLoads-FAIL.png)
 
 ##### Last Run Result
 ![contextLoads Pass](./screenshots/contextLoads-PASS.png)
@@ -108,10 +108,12 @@ Scope: player note read/upsert; master note list/create/delete; membership and o
 ![Notes Suite Tests 6](./screenshots/NotesSuite6.png)
 
 ##### Last Run Result
-![Notes Suite PASS](./screenshots/NotesSuite-PASS.png)
+![Notes Suite PASS](./screenshots/NoteServiceSuite-PASS.png)
 
 ##### Summary of Changes
 - None were needed. All tests passed
+
+
 ---
 
 ### 2.3 Session log service (`SessionLogServiceImplTest`)
@@ -157,7 +159,7 @@ Scope: local cache hit; dnd5eapi miss -> cache; spellbook ownership; creation-ti
 
 ##### Summary of Changes
 - None were needed. All tests passed
-- 
+
 ---
 
 ### 2.5 Inventory service (`InventoryServiceImplTest`)
@@ -178,6 +180,7 @@ Scope: AC recalculation, Strength gate on armor, starting equipment flag, gold o
 
 ##### Summary of Changes
 - None were needed. All tests passed
+
 ---
 
 ### 2.6 Full-suite plan summary
@@ -196,6 +199,7 @@ Scope: AC recalculation, Strength gate on armor, starting equipment flag, gold o
 
 ##### Summary of Changes
 - None were needed. All tests passed
+
 ---
 
 ## 3. Unit test scripts
@@ -333,10 +337,10 @@ class CampaignkeepApplicationTests {
 
 ### 4.1 Results table
 
-| Plan ID       | Test method | Result (fill in) | Evidence                                                                 |
-|---------------|-------------|-------------|--------------------------------------------------------------------------|
+| Plan ID       | Test method | Result (fill in) | Evidence                                                              |
+|---------------|-------------|-------------|-----------------------------------------------------------------------|
 | A-1           | `contextLoads` | Pass | ![Context Loads Pass](./screenshots/contextLoads-PASS.png)            |
-| N-1 ... N-9   | Notes suite | Pass | ![Notes Suite Pass](./screenshots/NotesSuite-PASS.png)                |
+| N-1 ... N-9   | Notes suite | Pass | ![Notes Suite Pass](./screenshots/NoteServiceSuite-PASS.png)          |
 | S-1 ... S-9   | Session log suite | Pass | ![Session Log Suite Pass](./screenshots/SessionLogSuite-PASS.png)     |
 | SP-1 ... SP-6 | Spell suite | Pass / Fail | ![Spell Service Suite Pass](./screenshots/SpellServiceSuite-PASS.png) |
 | I-1 ... I-6   | Inventory suite | Pass | ![Inventory Suite Pass](./screenshots/InventoryServiceSuite-PASS.png) |

@@ -13,6 +13,7 @@ D&D 5e campaign and character organizer for players and game masters. Vue 3 fron
 | [User guide](docs/user-guide.md) | Players and GMs | How to create accounts, campaigns, characters, and use table tools |
 | [Setup and maintenance guide](docs/setup-and-maintenance-guide.md) | Developers / maintainers | Prerequisites, environment variables, local run, Flyway, troubleshooting |
 | [Design document](docs/design-document.md) | Developers / reviewers | Class and sequence diagrams for core OOP design |
+| [Software testing](docs/software-testing.md) | Evaluators / maintainers | Unit test plan, scripts, results placeholders, and changes from testing |
 
 ---
 
@@ -22,7 +23,7 @@ D&D 5e campaign and character organizer for players and game masters. Vue 3 fron
 campaignkeep/
 ├── backend/     # Spring Boot REST API (default http://localhost:8080)
 ├── frontend/    # Vue 3 + Vite SPA (default http://localhost:5173)
-└── docs/        # Guides linked above
+└── docs/        # Guides
 ```
 
 ---
@@ -35,6 +36,6 @@ campaignkeep/
 
 ---
 
-## Capstone context
+## Capstone
 
 WGU D424 Software Engineering Capstone project. Includes JWT auth, role-based campaign access (master/player), character management, inventory, spells, session logs, and a client-side dice roller.

@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class NoteServiceImplTest {
-
     private static final Long CAMPAIGN_ID = 1L;
     private static final Long USER_ID = 10L;
     private static final Long CHARACTER_ID = 100L;
@@ -60,7 +59,6 @@ class NoteServiceImplTest {
     void setUp() {
         User player = new User();
         player.setId(USER_ID);
-
         playableCharacter = new PlayableCharacter();
         playableCharacter.setId(CHARACTER_ID);
         playableCharacter.setPlayer(player);

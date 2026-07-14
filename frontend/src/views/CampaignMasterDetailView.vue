@@ -12,6 +12,7 @@ import MasterSessionLogsPanel from '@/components/sessionlogs/MasterSessionLogsPa
 import MasterSpellsPanel from '@/components/spells/MasterSpellsPanel.vue'
 import GrantItemPanel from '@/components/equipment/GrantItemPanel.vue'
 import CampaignItemsPanel from '@/components/equipment/CampaignItemsPanel.vue'
+import DiceRollPanel from '@/components/dice/DiceRollPanel.vue'
 import { useCampaignStore } from '@/stores/campaign'
 import { isAxiosError } from 'axios'
 import { storeToRefs } from 'pinia'
@@ -67,6 +68,7 @@ const tabs = [
   { id: 'session-logs', label: 'Session Logs' },
   { id: 'members', label: 'Campaign Members' },
   { id: 'campaign-items', label: 'Campaign Items' },
+  { id: 'roll', label: 'Roll' },
 ]
 
 function requestDelete() {
@@ -181,6 +183,9 @@ onMounted(async () => {
         </template>
         <template #campaign-items>
           <CampaignItemsPanel :campaign-id="campaignId" />
+        </template>
+        <template #roll>
+          <DiceRollPanel mode="master" />
         </template>
       </BaseTabPanel>
 

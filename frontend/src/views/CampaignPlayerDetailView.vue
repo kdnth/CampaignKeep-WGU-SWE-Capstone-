@@ -11,6 +11,7 @@ import StartingEquipmentModal from '@/components/equipment/StartingEquipmentModa
 import PlayerNoteEditor from '@/components/notes/PlayerNoteEditor.vue'
 import PlayerSessionLogsPanel from '@/components/sessionlogs/PlayerSessionLogsPanel.vue'
 import CharacterSpellbookPanel from '@/components/spells/CharacterSpellbookPanel.vue'
+import DiceRollPanel from '@/components/dice/DiceRollPanel.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useCampaignStore } from '@/stores/campaign'
 import { useDndClassStore } from '@/stores/dndClass'
@@ -51,7 +52,7 @@ const tabs = computed(() => [
   { id: 'session-logs', label: 'Session Logs' },
   { id: 'equipment', label: 'Equipment', disabled: !playerCharacter.value },
   { id: 'attacks', label: 'Attacks', disabled: !playerCharacter.value },
-  { id: 'roll', label: 'Roll', disabled: true },
+  { id: 'roll', label: 'Roll', disabled: false },
 ])
 
 async function checkStartingEquipment() {
@@ -193,7 +194,7 @@ watch(playerCharacter, async (character) => {
           />
         </template>
         <template #roll>
-          <p class="text-neutral-400">Coming soon.</p>
+          <DiceRollPanel mode="player" :character="playerCharacter" />
         </template>
       </BaseTabPanel>
     </template>

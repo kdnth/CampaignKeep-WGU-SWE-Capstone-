@@ -44,8 +44,8 @@ watch(
       </button>
     </div>
 
-    <div v-for="tab in tabs" :key="tab.id">
-      <slot v-if="activeTab === tab.id" :name="tab.id" />
+    <div>
+      <slot :name="activeTab" />
     </div>
   </div>
 </template>

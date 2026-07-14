@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
-import SessionLogCard from '@/components/sessionlogs/SessionLogCard.vue'
 import SessionLogDetailModal from '@/components/sessionlogs/SessionLogDetailModal.vue'
 import SessionLogEditorModal from '@/components/sessionlogs/SessionLogEditorModal.vue'
 import { useSessionLogStore } from '@/stores/sessionLog'
@@ -154,7 +153,7 @@ onMounted(loadSessionLogs)
     </p>
 
     <div v-else class="overflow-x-auto rounded-xl bg-white">
-      <table class="w-full min-w-[28rem] text-left">
+      <table class="w-full min-w-md text-left">
         <thead>
           <tr class="border-b border-neutral-200 text-sm text-neutral-600">
             <th class="px-4 py-3 font-medium">Session Title</th>

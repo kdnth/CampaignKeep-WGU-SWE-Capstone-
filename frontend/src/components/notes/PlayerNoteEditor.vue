@@ -25,7 +25,7 @@ const panelTitle = computed(() => `${props.characterName}'s Notes`)
 function formatError(err: unknown, fallback: string): string {
   if (isAxiosError(err)) {
     if (!err.response) {
-      return 'Unable to reach the server. Check that the backend is running — this is not a notes permissions issue.'
+      return 'Unable to reach the server.'
     }
     return err.response.data?.message ?? fallback
   }

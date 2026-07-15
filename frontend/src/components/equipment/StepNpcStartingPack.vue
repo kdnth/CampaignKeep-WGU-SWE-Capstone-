@@ -25,8 +25,12 @@ function selectPack(index: string) {
   emit('update:modelValue', index)
 }
 
+function clearPack() {
+  selectedIndex.value = null
+  emit('update:modelValue', null)
+}
+
 function handleNext() {
-  if (!selectedIndex.value) return
   emit('next')
 }
 
@@ -90,10 +94,7 @@ onMounted(async () => {
           type="radio"
           name="starting-pack"
           :checked="selectedIndex === null"
-          @change="
-            selectedIndex = null
-            emit('update:modelValue', null)
-          "
+          @change="clearPack"
         />
         <span>No pack</span>
       </label>

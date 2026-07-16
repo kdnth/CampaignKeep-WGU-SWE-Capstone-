@@ -124,6 +124,12 @@ watch(
             v-if="dropdownOpen"
             class="absolute right-0 mt-2 w-40 bg-black border border-neutral-700 rounded-lg shadow-lg overflow-hidden"
           >
+            <RouterLink
+              :to="{ name: 'settings' }"
+              class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+            >
+              Settings
+            </RouterLink>
             <button
               type="button"
               @click="handleLogout"
@@ -188,6 +194,13 @@ watch(
           <div class="my-2 border-t border-neutral-800" />
 
           <p class="px-3 py-1 text-sm text-neutral-500">{{ authStore.username }}</p>
+          <RouterLink
+            :to="{ name: 'settings' }"
+            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            @click="closeMobileMenu"
+          >
+            Settings
+          </RouterLink>
           <button
             type="button"
             class="w-full text-left px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"

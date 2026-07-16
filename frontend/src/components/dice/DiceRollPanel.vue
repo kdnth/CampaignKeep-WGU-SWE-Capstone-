@@ -160,7 +160,7 @@ async function handleRoll() {
 
       <div>
         <p class="text-sm text-neutral-400">Advantage</p>
-        <div class="mt-1 flex gap-2">
+        <div class="mt-1 flex flex-wrap gap-2">
           <BaseButton
             variant="secondary"
             :disabled="!isD20 || isRolling"

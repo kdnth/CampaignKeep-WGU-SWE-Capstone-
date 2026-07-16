@@ -83,7 +83,7 @@ async function handleSubmit() {
           <p v-if="errorMessage" class="text-red-600 mx-0.5 pt-2">{{ errorMessage }}</p>
 
           <!-- submit -->
-          <div class="flex justify-between py-8">
+          <div class="flex flex-col items-start sm:flex-row sm:items-center sm:justify-between py-8">
             <!-- Register link -->
             <p class="text-white my-4 flex gap-2">
               Don't have an account?

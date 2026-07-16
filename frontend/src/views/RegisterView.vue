@@ -56,11 +56,13 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="p-2 w-screen flex justify-center">
-    <div class="lg:w-1/2 md:w-3/4">
-      <h2 class="text-3xl py-4 font-medium text-white">Create an account</h2>
+  <div class="p-2 w-full max-w-full flex justify-center">
+    <div class="w-full px-2 sm:px-0 sm:w-3/4 lg:w-1/2">
+      <h2 class="text-2xl sm:text-3xl py-4 font-medium text-white">Create an account</h2>
 
-      <div class="flex flex-col px-16 py-8 min-h-fit border-2 border-neutral-200 rounded-4xl">
+      <div
+        class="flex flex-col px-4 sm:px-8 md:px-16 py-6 sm:py-8 min-h-fit border-2 border-neutral-200 rounded-4xl"
+      >
         <form @submit.prevent="handleSubmit">
           <div class="flex flex-col pt-4 pb-2">
             <!-- username field -->
@@ -88,9 +90,9 @@ async function handleSubmit() {
               :error="!!emailErr"
             />
           </div>
-          <!-- PW field -->
-          <div class="flex justify-between">
-            <div class="flex flex-col pt-4 pb-2">
+          <!-- PW fields -->
+          <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:gap-6">
+            <div class="flex flex-col pt-4 pb-2 flex-1 min-w-0">
               <label class="text-white" for="password">Password</label>
               <BaseInput
                 id="password"
@@ -102,8 +104,7 @@ async function handleSubmit() {
                 :error="!!passwordErr"
               />
             </div>
-            <!-- Confirm PW -->
-            <div class="flex flex-col pt-4 pb-2">
+            <div class="flex flex-col pt-4 pb-2 flex-1 min-w-0">
               <label class="text-white" for="passwordConfirm">Confirm password</label>
               <BaseInput
                 id="passwordConfirm"
@@ -120,19 +121,19 @@ async function handleSubmit() {
           <p v-if="errorMessage" class="text-red-500 mx-0.5 my-2">{{ errorMessage }}</p>
 
           <!-- submit -->
-          <div class="flex justify-center">
-            <BaseButton type="submit" :loading="isLoading">
+          <div class="flex flex-col items-stretch gap-4 py-6 sm:py-8">
+            <BaseButton class="!w-full sm:!w-fit sm:self-center" type="submit" :loading="isLoading">
               {{ isLoading ? 'Creating account...' : 'Create account' }}
             </BaseButton>
+
+            <p class="text-white text-center sm:text-left flex flex-col sm:flex-row sm:gap-2">
+              Already have an account?
+              <RouterLink class="text-white underline hover:text-neutral-400" :to="{ name: 'login' }">
+                Log in
+              </RouterLink>
+            </p>
           </div>
         </form>
-
-        <p class="text-white my-4 flex flex-col">
-          Already have an account?
-          <RouterLink class="text-white underline hover:text-neutral-400" :to="{ name: 'login' }"
-            >Log in</RouterLink
-          >
-        </p>
       </div>
     </div>
   </div>

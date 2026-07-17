@@ -51,14 +51,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mt-3 rounded-lg border border-neutral-600 p-3 text-sm text-white">
+  <div class="mt-3 rounded-lg border border-border p-3 text-sm text-fg">
     <p class="mb-2 font-medium">Grant item to {{ characterName }}</p>
     <div class="flex flex-wrap items-end gap-3">
       <div>
-        <label class="text-neutral-400">Item</label>
+        <label class="text-fg-subtle">Item</label>
         <select
           v-model="selectedItemId"
-          class="block min-w-48 rounded-lg px-3 py-2 text-black"
+          class="bg-input block min-w-48 rounded-lg px-3 py-2 text-fg"
         >
           <option :value="null">Select item...</option>
           <option v-for="item in items" :key="item.id" :value="item.id">
@@ -67,12 +67,12 @@ onMounted(() => {
         </select>
       </div>
       <div>
-        <label class="text-neutral-400">Qty</label>
+        <label class="text-fg-subtle">Qty</label>
         <input
           v-model.number="quantity"
           type="number"
           min="1"
-          class="block w-20 rounded-lg px-3 py-2 text-black"
+          class="bg-input block w-20 rounded-lg px-3 py-2 text-fg"
         />
       </div>
       <BaseButton
@@ -84,7 +84,7 @@ onMounted(() => {
         Grant
       </BaseButton>
     </div>
-    <p v-if="successMessage" class="mt-2 text-green-400">{{ successMessage }}</p>
-    <p v-if="errorMessage" class="mt-2 text-red-400">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="mt-2 text-success">{{ successMessage }}</p>
+    <p v-if="errorMessage" class="mt-2 text-danger">{{ errorMessage }}</p>
   </div>
 </template>

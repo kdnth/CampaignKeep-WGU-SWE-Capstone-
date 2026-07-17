@@ -90,67 +90,67 @@ async function handleSubmit() {
     <Teleport to="body">
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4"
         @click.self="close"
       >
         <div
-          class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-neutral-900 p-6 text-white"
+          class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-surface p-6 text-fg"
         >
           <h2 class="mb-4 text-xl font-semibold">Create Campaign Item</h2>
 
           <form class="space-y-4" @submit.prevent="handleSubmit">
             <div>
-              <label class="text-sm text-neutral-400">Type</label>
-              <select v-model="form.itemType" class="mt-1 w-full rounded-lg px-3 py-2 text-black">
+              <label class="text-sm text-fg-subtle">Type</label>
+              <select v-model="form.itemType" class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg">
                 <option v-for="t in itemTypes" :key="t" :value="t">{{ t }}</option>
               </select>
             </div>
 
             <div>
-              <label class="text-sm text-neutral-400">Name</label>
+              <label class="text-sm text-fg-subtle">Name</label>
               <input
                 v-model="form.name"
-                class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 required
               />
             </div>
             <div>
-              <label class="text-sm text-neutral-400">Description</label>
+              <label class="text-sm text-fg-subtle">Description</label>
               <input
                 v-model="form.description"
-                class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
               />
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-sm text-neutral-400">Base Value (gp)</label>
+                <label class="text-sm text-fg-subtle">Base Value (gp)</label>
                 <input
                   v-model.number="form.value"
                   type="number"
                   min="0"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 />
               </div>
               <div>
-                <label class="text-sm text-neutral-400">Weight (lb.)</label>
+                <label class="text-sm text-fg-subtle">Weight (lb.)</label>
                 <input
                   v-model.number="form.weight"
                   type="number"
                   min="0"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label class="text-sm text-neutral-400">Rarity</label>
-              <select v-model="form.rarity" class="mt-1 w-full rounded-lg px-3 py-2 text-black">
+              <label class="text-sm text-fg-subtle">Rarity</label>
+              <select v-model="form.rarity" class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg">
                 <option v-for="r in rarities" :key="r" :value="r">
                   {{ formatRarityLabel(r) }} (×{{ rarityMultipliers[r] }})
                 </option>
               </select>
-              <p class="mt-1 text-xs text-neutral-400">Effective cost: {{ previewCost }} gp</p>
+              <p class="mt-1 text-xs text-fg-subtle">Effective cost: {{ previewCost }} gp</p>
             </div>
 
             <label class="flex items-center gap-2 text-sm">
@@ -160,14 +160,14 @@ async function handleSubmit() {
 
             <template v-if="form.itemType === 'weapon'">
               <div>
-                <label class="text-sm text-neutral-400">Damage (e.g. 1d8)</label>
-                <input v-model="form.damage" class="mt-1 w-full rounded-lg px-3 py-2 text-black" />
+                <label class="text-sm text-fg-subtle">Damage (e.g. 1d8)</label>
+                <input v-model="form.damage" class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg" />
               </div>
               <div>
-                <label class="text-sm text-neutral-400">Damage Type</label>
+                <label class="text-sm text-fg-subtle">Damage Type</label>
                 <select
                   v-model="form.damageType"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 >
                   <option value="slashing">slashing</option>
                   <option value="piercing">piercing</option>
@@ -175,31 +175,31 @@ async function handleSubmit() {
                 </select>
               </div>
               <div>
-                <label class="text-sm text-neutral-400">Range Type</label>
+                <label class="text-sm text-fg-subtle">Range Type</label>
                 <select
                   v-model="form.weaponRange"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 >
                   <option value="melee">melee</option>
                   <option value="ranged">ranged</option>
                 </select>
               </div>
               <div>
-                <label class="text-sm text-neutral-400">Range (ft.)</label>
+                <label class="text-sm text-fg-subtle">Range (ft.)</label>
                 <input
                   v-model.number="form.range"
                   type="number"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 />
               </div>
             </template>
 
             <template v-if="form.itemType === 'armor'">
               <div>
-                <label class="text-sm text-neutral-400">Armor Category</label>
+                <label class="text-sm text-fg-subtle">Armor Category</label>
                 <select
                   v-model.number="form.armorCategoryId"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 >
                   <option :value="1">light</option>
                   <option :value="2">medium</option>
@@ -208,32 +208,32 @@ async function handleSubmit() {
                 </select>
               </div>
               <div>
-                <label class="text-sm text-neutral-400">Base AC</label>
+                <label class="text-sm text-fg-subtle">Base AC</label>
                 <input
                   v-model.number="form.baseAc"
                   type="number"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 />
               </div>
               <div>
-                <label class="text-sm text-neutral-400">Max DEX Bonus</label>
+                <label class="text-sm text-fg-subtle">Max DEX Bonus</label>
                 <input
                   v-model.number="form.maxDexBonus"
                   type="number"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 />
               </div>
               <div>
-                <label class="text-sm text-neutral-400">STR Minimum</label>
+                <label class="text-sm text-fg-subtle">STR Minimum</label>
                 <input
                   v-model.number="form.strMinimum"
                   type="number"
-                  class="mt-1 w-full rounded-lg px-3 py-2 text-black"
+                  class="bg-input mt-1 w-full rounded-lg px-3 py-2 text-fg"
                 />
               </div>
             </template>
 
-            <p v-if="errorMessage" class="text-red-400">{{ errorMessage }}</p>
+            <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
             <div class="flex gap-3">
               <BaseButton type="button" variant="cancel" @click="close">Cancel</BaseButton>

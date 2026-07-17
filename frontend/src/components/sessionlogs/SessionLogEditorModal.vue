@@ -45,29 +45,29 @@ function handleSave() {
 <template>
   <Teleport to="body">
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-overlay"
       @click.self="emit('cancel')"
     >
       <div
-        class="flex max-h-[90vh] w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-xl bg-white p-6"
+        class="flex max-h-[90vh] w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-xl bg-surface p-6"
       >
         <h3 class="text-xl">New Session Log</h3>
 
-        <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
         <div class="flex flex-col gap-2">
-          <label for="session-log-title" class="text-sm font-medium text-neutral-700">Title</label>
+          <label for="session-log-title" class="text-sm font-medium text-fg-muted">Title</label>
           <input
             id="session-log-title"
             v-model="title"
             maxlength="100"
-            class="rounded-lg border border-neutral-300 p-2 text-lg font-bold"
-            placeholder="Session 1 — The Goblin Cave"
+            class="rounded-lg border border-border bg-input p-2 text-lg font-bold text-fg placeholder:text-placeholder"
+            placeholder="Session 1: The Goblin Cave"
           />
         </div>
 
         <div class="flex flex-col gap-2">
-          <label for="session-log-body" class="text-sm font-medium text-neutral-700">
+          <label for="session-log-body" class="text-sm font-medium text-fg-muted">
             Session notes
           </label>
           <textarea
@@ -75,16 +75,16 @@ function handleSave() {
             v-model="body"
             rows="14"
             maxlength="10000"
-            class="rounded-lg border border-neutral-300 p-2"
+            class="rounded-lg border border-border bg-input p-2 text-fg placeholder:text-placeholder"
             placeholder="What happened this session..."
           />
         </div>
 
         <div class="flex items-center justify-between">
-          <span class="text-sm text-neutral-500">{{ body.length }} / 10000</span>
+          <span class="text-sm text-fg-subtle">{{ body.length }} / 10000</span>
           <div class="flex gap-2">
             <BaseButton variant="cancel" type="button" @click="emit('cancel')">Cancel</BaseButton>
-            <BaseButton variant="primary" type="button" :loading="isLoading" @click="handleSave">
+            <BaseButton variant="primary" type="button" :loading="props.isLoading" @click="handleSave">
               {{ isLoading ? 'Saving...' : 'Create Log' }}
             </BaseButton>
           </div>

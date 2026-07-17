@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { BRAND_LOGOS, useThemeStore } from '@/stores/theme'
 import { PxChevronDown, PxChevronUp, PxClose, PxMenu } from 'oh-vue-icons/icons'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
 
@@ -10,6 +11,9 @@ addIcons(PxChevronDown, PxChevronUp, PxClose, PxMenu)
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const themeStore = useThemeStore()
+
+const logoSrc = computed(() => BRAND_LOGOS[themeStore.resolved])
 
 const dropdownOpen = ref(false)
 const mobileMenuOpen = ref(false)
@@ -46,14 +50,14 @@ watch(
 </script>
 
 <template>
-  <nav class="relative flex items-center justify-between px-4 sm:px-8 py-4 bg-black">
+  <nav class="relative flex items-center justify-between bg-chrome px-4 py-4 sm:px-8">
     <!-- LOGO -->
-    <RouterLink :to="{ name: 'home' }" class="text-2xl sm:text-3xl font-normal jacquard shrink-0">
-      <div class="flex gap-2 items-center">
-        <img src="/favicon.ico" alt="Multi-colored 6-sided dice" class="w-7 h-7 sm:w-8 sm:h-8" />
+    <RouterLink :to="{ name: 'home' }" class="jacquard shrink-0 text-2xl font-normal sm:text-3xl">
+      <div class="flex items-center gap-2">
+        <img :src="logoSrc" alt="Multi-colored 6-sided dice" class="h-7 w-7 sm:h-8 sm:w-8" />
         <div>
-          <span class="text-white">Campaign</span>
-          <span class="text-red-500">Keep</span>
+          <span class="text-fg">Campaign</span>
+          <span class="text-brand">Keep</span>
         </div>
       </div>
     </RouterLink>
@@ -61,47 +65,35 @@ watch(
     <!-- DESKTOP NAV LINKS -->
     <div
       v-if="authStore.isAuthenticated"
-      class="hidden md:flex gap-6 absolute left-1/2 -translate-x-1/2"
+      class="absolute left-1/2 hidden -translate-x-1/2 gap-6 md:flex"
     >
-      <RouterLink
-        :to="{ name: 'home' }"
-        class="text-neutral-300 hover:text-white transition-colors"
-      >
-        Home
-      </RouterLink>
-      <RouterLink
-        :to="{ name: 'campaigns' }"
-        class="text-neutral-300 hover:text-white transition-colors"
-      >
+      <RouterLink :to="{ name: 'campaigns' }" class="text-fg-muted transition-colors hover:text-fg">
         My Campaigns
       </RouterLink>
       <RouterLink
         :to="{ name: 'characters' }"
-        class="text-neutral-300 hover:text-white transition-colors"
+        class="text-fg-muted transition-colors hover:text-fg"
       >
         My Characters
       </RouterLink>
-      <RouterLink
-        :to="{ name: 'spells' }"
-        class="text-neutral-300 hover:text-white transition-colors"
-      >
+      <RouterLink :to="{ name: 'spells' }" class="text-fg-muted transition-colors hover:text-fg">
         Spells
       </RouterLink>
     </div>
 
     <!-- DESKTOP AUTH -->
-    <div class="hidden md:flex items-center gap-3">
+    <div class="hidden items-center gap-3 md:flex">
       <!-- LOGGED OUT -->
       <template v-if="!authStore.isAuthenticated">
         <RouterLink
           :to="{ name: 'login' }"
-          class="text-neutral-300 hover:text-white transition-colors text-sm"
+          class="text-sm text-fg-muted transition-colors hover:text-fg"
         >
           Login
         </RouterLink>
         <RouterLink
           :to="{ name: 'register' }"
-          class="bg-green-800 hover:bg-green-900 text-white text-sm px-4 py-2 rounded-lg transition-colors"
+          class="rounded-lg bg-success px-4 py-2 text-sm text-white transition-colors hover:bg-success-hover"
         >
           Sign Up
         </RouterLink>
@@ -113,27 +105,27 @@ watch(
           <button
             type="button"
             @click="toggleDropdown"
-            class="flex items-center gap-2 text-neutral-300 hover:text-white transition-colors text-sm"
+            class="flex items-center gap-2 text-sm text-fg-muted transition-colors hover:text-fg"
           >
             <span>{{ authStore.username }}</span>
-            <OhVueIcon name="px-chevron-down" v-if="!dropdownOpen" class="w-4 h-4" />
-            <OhVueIcon name="px-chevron-up" v-else class="w-4 h-4" />
+            <OhVueIcon name="px-chevron-down" v-if="!dropdownOpen" class="h-4 w-4" />
+            <OhVueIcon name="px-chevron-up" v-else class="h-4 w-4" />
           </button>
 
           <div
             v-if="dropdownOpen"
-            class="absolute right-0 mt-2 w-40 bg-black border border-neutral-700 rounded-lg shadow-lg overflow-hidden"
+            class="absolute right-0 mt-2 w-40 overflow-hidden rounded-lg border border-border bg-chrome shadow-lg"
           >
             <RouterLink
               :to="{ name: 'settings' }"
-              class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+              class="block px-4 py-2 text-sm text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             >
               Settings
             </RouterLink>
             <button
               type="button"
               @click="handleLogout"
-              class="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+              class="w-full px-4 py-2 text-left text-sm text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             >
               Logout
             </button>
@@ -145,65 +137,65 @@ watch(
     <!-- MOBILE HAMBURGER -->
     <button
       type="button"
-      class="md:hidden text-neutral-300 hover:text-white transition-colors p-1"
+      class="p-1 text-fg-muted transition-colors hover:text-fg md:hidden"
       :aria-expanded="mobileMenuOpen"
       aria-controls="mobile-nav-menu"
       aria-label="Toggle navigation menu"
       @click="toggleMobileMenu"
     >
-      <OhVueIcon :name="mobileMenuOpen ? 'px-close' : 'px-menu'" class="w-6 h-6" />
+      <OhVueIcon :name="mobileMenuOpen ? 'px-close' : 'px-menu'" class="h-6 w-6" />
     </button>
 
     <!-- MOBILE MENU -->
     <div
       v-if="mobileMenuOpen"
       id="mobile-nav-menu"
-      class="absolute top-full left-0 right-0 z-50 md:hidden bg-black border-t border-neutral-800 shadow-lg"
+      class="absolute top-full right-0 left-0 z-50 border-t border-border bg-chrome shadow-lg md:hidden"
     >
-      <div class="flex flex-col px-4 py-3 gap-1">
+      <div class="flex flex-col gap-1 px-4 py-3">
         <template v-if="authStore.isAuthenticated">
           <RouterLink
             :to="{ name: 'home' }"
-            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="rounded-lg px-3 py-2.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="closeMobileMenu"
           >
             Home
           </RouterLink>
           <RouterLink
             :to="{ name: 'campaigns' }"
-            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="rounded-lg px-3 py-2.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="closeMobileMenu"
           >
             My Campaigns
           </RouterLink>
           <RouterLink
             :to="{ name: 'characters' }"
-            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="rounded-lg px-3 py-2.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="closeMobileMenu"
           >
             My Characters
           </RouterLink>
           <RouterLink
             :to="{ name: 'spells' }"
-            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="rounded-lg px-3 py-2.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="closeMobileMenu"
           >
             Spells
           </RouterLink>
 
-          <div class="my-2 border-t border-neutral-800" />
+          <div class="my-2 border-t border-border" />
 
-          <p class="px-3 py-1 text-sm text-neutral-500">{{ authStore.username }}</p>
+          <p class="px-3 py-1 text-sm text-fg-subtle">{{ authStore.username }}</p>
           <RouterLink
             :to="{ name: 'settings' }"
-            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="rounded-lg px-3 py-2.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="closeMobileMenu"
           >
             Settings
           </RouterLink>
           <button
             type="button"
-            class="w-full text-left px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="w-full rounded-lg px-3 py-2.5 text-left text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="handleLogout"
           >
             Logout
@@ -213,14 +205,14 @@ watch(
         <template v-else>
           <RouterLink
             :to="{ name: 'login' }"
-            class="px-3 py-2.5 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            class="rounded-lg px-3 py-2.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
             @click="closeMobileMenu"
           >
             Login
           </RouterLink>
           <RouterLink
             :to="{ name: 'register' }"
-            class="px-3 py-2.5 text-center bg-green-800 hover:bg-green-900 text-white rounded-lg transition-colors"
+            class="rounded-lg bg-success px-3 py-2.5 text-center text-white transition-colors hover:bg-success-hover"
             @click="closeMobileMenu"
           >
             Sign Up

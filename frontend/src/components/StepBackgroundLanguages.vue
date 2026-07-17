@@ -33,10 +33,10 @@ function toggleLanguage(id: number, checked: boolean) {
 </script>
 
 <template>
-  <h2 class="text-4xl text-white my-4">Background &amp; Languages</h2>
-  <div class="space-y-4 text-white border-2 border-white rounded-2xl p-8">
+  <h2 class="text-4xl text-fg my-4">Background &amp; Languages</h2>
+  <div class="space-y-4 text-fg border-2 border-border-strong rounded-2xl p-8">
     <div class="space-y-1">
-      <h3 class="text-sm text-neutral-300">Background</h3>
+      <h3 class="text-sm text-fg-muted">Background</h3>
       <div
         v-for="background in backgroundStore.backgrounds"
         :key="background.id"
@@ -54,7 +54,7 @@ function toggleLanguage(id: number, checked: boolean) {
     </div>
 
     <div class="space-y-1">
-      <h3 class="text-sm text-neutral-300">Languages</h3>
+      <h3 class="text-sm text-fg-muted">Languages</h3>
       <div
         v-for="language in languageStore.languages"
         :key="language.id"

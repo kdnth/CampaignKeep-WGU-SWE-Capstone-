@@ -9,7 +9,7 @@ defineProps<{
 addIcons(PxArrowLeft)
 </script>
 <template>
-  <RouterLink :to="{ name: page }" class="text-purple-500 hover:underline hover:text-purple-300"
+  <RouterLink :to="{ name: page }" class="text-accent hover:underline hover:text-accent-hover"
     ><OhVueIcon name="px-arrow-left" /> Back to {{ linkName }}</RouterLink
   >
 </template>

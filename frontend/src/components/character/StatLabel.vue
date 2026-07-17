@@ -5,9 +5,9 @@ defineProps<{
 }>()
 </script>
 <template>
-  <div class="text-white">
+  <div class="text-fg">
     <div class="flex flex-col items-center">
-      <h1 class="text-xs uppercase border-b border-white">
+      <h1 class="text-xs px-0.5 mx-1 uppercase border-b border-border-strong">
         {{ stat }}
       </h1>
       <p class="text-lg"><span v-if="stat == 'initiative'">+</span>{{ value }}</p>

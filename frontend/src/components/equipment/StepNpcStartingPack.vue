@@ -48,22 +48,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-6 text-white">
+  <div class="space-y-6 text-fg">
     <h2 class="text-xl font-semibold">Starting Pack</h2>
-    <p class="text-sm text-neutral-400">
+    <p class="text-sm text-fg-subtle">
       Choose an equipment pack. Contents are loaded from the D&amp;D 5e API and added to this NPC's
       inventory.
     </p>
 
-    <p v-if="isLoading" class="text-neutral-400">Loading packs...</p>
-    <p v-else-if="errorMessage" class="text-red-400">{{ errorMessage }}</p>
+    <p v-if="isLoading" class="text-fg-subtle">Loading packs...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
     <div v-else class="space-y-3">
       <label
         v-for="pack in packs"
         :key="pack.index"
-        class="flex cursor-pointer flex-col gap-2 rounded-lg border border-neutral-600 px-4 py-3 hover:bg-neutral-800"
-        :class="selectedIndex === pack.index ? 'border-purple-500 bg-neutral-800' : ''"
+        class="flex cursor-pointer flex-col gap-2 rounded-lg border border-border px-4 py-3 hover:bg-surface-muted"
+        :class="selectedIndex === pack.index ? 'border-accent bg-surface-muted' : ''"
       >
         <div class="flex items-center gap-3">
           <input
@@ -75,10 +75,10 @@ onMounted(async () => {
           />
           <div>
             <p class="font-medium">{{ pack.name }}</p>
-            <p class="text-xs text-neutral-400">{{ pack.costGp }} gp</p>
+            <p class="text-xs text-fg-subtle">{{ pack.costGp }} gp</p>
           </div>
         </div>
-        <ul class="ml-8 list-disc text-xs text-neutral-400">
+        <ul class="ml-8 list-disc text-xs text-fg-subtle">
           <li v-for="content in pack.contents" :key="content.apiIndex">
             {{ content.name }}
             <span v-if="content.quantity > 1">×{{ content.quantity }}</span>
@@ -87,8 +87,8 @@ onMounted(async () => {
       </label>
 
       <label
-        class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-600 px-4 py-3 hover:bg-neutral-800"
-        :class="selectedIndex === null ? 'border-purple-500 bg-neutral-800' : ''"
+        class="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-3 hover:bg-surface-muted"
+        :class="selectedIndex === null ? 'border-accent bg-surface-muted' : ''"
       >
         <input
           type="radio"

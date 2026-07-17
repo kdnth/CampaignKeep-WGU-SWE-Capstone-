@@ -32,6 +32,13 @@ public class User extends Auditable {
     @Column(name="password_hash", nullable = false)
     private String passwordHash;
 
+    @Column(name = "email_verified_at")
+    private LocalDateTime emailVerifiedAt;
+
     @Column(name="last_activity")
     private LocalDateTime lastActivity;
+
+    public boolean isEmailVerified() {
+        return emailVerifiedAt != null;
+    }
 }

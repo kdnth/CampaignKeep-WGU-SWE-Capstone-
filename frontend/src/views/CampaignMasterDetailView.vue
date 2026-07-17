@@ -119,15 +119,15 @@ onMounted(async () => {
   <div class="flex w-full flex-col gap-6 p-8">
     <BackToLink page="campaigns" link-name="Campaigns" />
 
-    <p v-if="isLoading" class="text-neutral-300">Loading campaign...</p>
-    <p v-else-if="errorMessage && !activeCampaign" class="text-red-500">{{ errorMessage }}</p>
+    <p v-if="isLoading" class="text-fg-muted">Loading campaign...</p>
+    <p v-else-if="errorMessage && !activeCampaign" class="text-danger">{{ errorMessage }}</p>
 
     <template v-else-if="activeCampaign">
       <CampaignInfoHero :campaign="activeCampaign" />
 
       <BaseTabPanel :tabs="tabs" default-tab="pcs">
         <template #pcs>
-          <div v-if="playableCharacters.length === 0" class="text-neutral-400">
+          <div v-if="playableCharacters.length === 0" class="text-fg-subtle">
             No player characters in this campaign.
           </div>
           <div v-else class="grid gap-4">
@@ -145,7 +145,7 @@ onMounted(async () => {
 
         <template #npcs>
           <AddCampaignCharacterPanel :campaign-id="campaignId" character-type="npc" />
-          <div v-if="nonplayableCharacters.length === 0" class="mt-4 text-neutral-400">
+          <div v-if="nonplayableCharacters.length === 0" class="mt-4 text-fg-subtle">
             No NPCs in this campaign.
           </div>
           <div v-else class="mt-4 grid gap-4">
@@ -196,7 +196,7 @@ onMounted(async () => {
         </BaseButton>
       </div>
 
-      <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
     </template>
 
     <ConfirmationModal

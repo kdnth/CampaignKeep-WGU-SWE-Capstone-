@@ -50,15 +50,15 @@ function handleSave() {
 <template>
   <Teleport to="body">
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-overlay"
       @click.self="emit('cancel')"
     >
       <div
-        class="flex max-h-[90vh] w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-xl bg-white p-6"
+        class="flex max-h-[90vh] w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-xl bg-surface p-6"
       >
         <h3 class="text-xl">{{ noteId ? 'Edit Note' : 'New Note' }}</h3>
 
-        <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
         <div class="flex flex-col gap-2">
           <input
@@ -74,13 +74,13 @@ function handleSave() {
             v-model="body"
             rows="14"
             maxlength="10000"
-            class="rounded-lg px-0 border-0 border-neutral-300 p-2"
+            class="rounded-lg px-0 border-0 border-border p-2"
             placeholder="Campaign prep, plot hooks, session notes..."
           />
         </div>
 
         <div class="flex items-center justify-between">
-          <span class="text-sm text-neutral-500">{{ body.length }} / 10000</span>
+          <span class="text-sm text-fg-subtle">{{ body.length }} / 10000</span>
           <div class="flex gap-2">
             <BaseButton variant="cancel" type="button" @click="emit('cancel')">Cancel</BaseButton>
             <BaseButton variant="primary" type="button" :loading="isLoading" @click="handleSave">

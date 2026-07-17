@@ -52,10 +52,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-6 rounded-2xl border-2 border-white p-6 text-white">
-    <p v-if="isLoading" class="text-neutral-400">Loading attacks...</p>
-    <p v-else-if="errorMessage" class="text-red-400">{{ errorMessage }}</p>
-    <p v-else-if="attackList.length === 0" class="text-neutral-400">
+  <div class="space-y-6 rounded-2xl border-2 border-border-strong p-6 text-fg">
+    <p v-if="isLoading" class="text-fg-subtle">Loading attacks...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+    <p v-else-if="attackList.length === 0" class="text-fg-subtle">
       No equipped weapons. Equip a weapon in the Equipment tab to see attacks here.
     </p>
 
@@ -63,20 +63,20 @@ onMounted(async () => {
       <div
         v-for="attack in attackList"
         :key="attack.inventoryItemId"
-        class="rounded-lg border border-neutral-600 p-4"
+        class="rounded-lg border border-border p-4"
       >
         <h3 class="text-lg font-semibold">{{ attack.weaponName }}</h3>
-        <p class="text-sm text-neutral-400 capitalize">
+        <p class="text-sm text-fg-subtle capitalize">
           {{ attack.equippedSlot.replace('_', ' ') }} · {{ attack.weaponRange }}
           <span v-if="attack.range"> · {{ attack.range }} ft.</span>
         </p>
         <div class="mt-2 flex flex-wrap gap-4 text-sm">
           <p>
-            <span class="text-neutral-400">Attack:</span>
+            <span class="text-fg-subtle">Attack:</span>
             {{ formatModifier(attack.attackBonus) }}
           </p>
           <p>
-            <span class="text-neutral-400">Damage:</span>
+            <span class="text-fg-subtle">Damage:</span>
             {{ attack.damageDice }} {{ formatModifier(attack.damageBonus) }}
             {{ attack.damageType }}
           </p>
@@ -86,7 +86,7 @@ onMounted(async () => {
           <div>
             <label
               :for="`attacks-${attack.inventoryItemId}`"
-              class="text-sm text-neutral-400"
+              class="text-sm text-fg-subtle"
             >
               Number of attacks
             </label>
@@ -95,7 +95,7 @@ onMounted(async () => {
               type="number"
               min="1"
               :value="getAttackCount(attack)"
-              class="block w-24 rounded-lg px-3 py-2 text-black"
+              class="bg-input block w-24 rounded-lg px-3 py-2 text-fg"
               @input="
                 setAttackCount(
                   attack,
@@ -107,7 +107,7 @@ onMounted(async () => {
           <BaseButton variant="primary" @click="rollAttack(attack)">Roll Damage</BaseButton>
         </div>
 
-        <p v-if="rollResults[attack.inventoryItemId]" class="mt-3 text-green-400">
+        <p v-if="rollResults[attack.inventoryItemId]" class="mt-3 text-success">
           {{ rollResults[attack.inventoryItemId] }}
         </p>
       </div>

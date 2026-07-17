@@ -38,8 +38,8 @@ const hasItems = computed(() => displayEntries.value.length > 0)
 
 <template>
   <section class="space-y-4">
-    <h2 v-if="title" class="text-xl font-semibold text-white">{{ title }}</h2>
-    <p v-if="!hasItems" class="text-neutral-400">{{ emptyMessage }}</p>
+    <h2 v-if="title" class="text-xl font-semibold text-fg">{{ title }}</h2>
+    <p v-if="!hasItems" class="text-fg-subtle">{{ emptyMessage }}</p>
     <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-4">
       <ItemCard
         v-for="entry in displayEntries"

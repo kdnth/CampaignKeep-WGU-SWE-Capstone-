@@ -46,11 +46,11 @@ async function handleCreate() {
 </script>
 <template>
   <div class="p-20 flex flex-col items-center">
-    <h2 class="text-4xl text-white self-start">Create new campaign</h2>
-    <div class="border border-white rounded-xl px-8 py-4 my-4 w-full">
+    <h2 class="text-4xl text-fg self-start">Create new campaign</h2>
+    <div class="border border-border-strong rounded-xl px-8 py-4 my-4 w-full">
       <form @submit.prevent="handleCreate">
         <div class="flex flex-col max-w-3/4 pt-4">
-          <label class="text-white" for="title">Title</label>
+          <label class="text-fg" for="title">Title</label>
           <div class="relative block w-full">
             <input
               class="rounded-lg w-full pb-4 pt-2"
@@ -60,13 +60,13 @@ async function handleCreate() {
               placeholder="Campaign title"
               required
             />
-            <span class="absolute bottom-1 right-1 text-sm text-neutral-600">
+            <span class="absolute bottom-1 right-1 text-sm text-fg-muted">
               {{ title.length }}/{{ maxTitleChar }}
             </span>
           </div>
         </div>
         <div class="flex flex-col pt-4">
-          <label class="text-white" for="description">Description</label>
+          <label class="text-fg" for="description">Description</label>
           <div class="relative block w-full">
             <textarea
               class="rounded-lg w-full min-h-48 pb-4 pt-2"
@@ -75,13 +75,13 @@ async function handleCreate() {
               type="text"
               placeholder="Campaign description"
             />
-            <span class="absolute bottom-2 right-2 text-sm text-neutral-600">
+            <span class="absolute bottom-2 right-2 text-sm text-fg-muted">
               {{ description.length }}/{{ maxDescChar }}
             </span>
           </div>
         </div>
 
-        <p v-if="errorMessage" class="text-red-600 mx-0.5 pt-2">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="text-danger mx-0.5 pt-2">{{ errorMessage }}</p>
 
         <div class="flex justify-end gap-2">
           <BaseButton variant="danger" @click="router.push({ name: 'campaigns' })"

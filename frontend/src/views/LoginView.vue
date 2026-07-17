@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const usernameErr = ref(false)
@@ -16,6 +17,10 @@ const identifier = ref('')
 const password = ref('')
 const errorMessage = ref<string | null>(null)
 const isLoading = ref(false)
+
+const successMessage = computed(() =>
+  route.query.reset === '1' ? 'Password updated. You can sign in with your new password.' : null,
+)
 
 async function handleSubmit() {
   errorMessage.value = null
@@ -44,16 +49,16 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="p-2 w-screen flex justify-center">
-    <div class="lg:w-1/2 md:w-3/4">
-      <h2 class="text-3xl py-4 font-medium text-white">Login</h2>
+  <div class="flex w-screen justify-center p-2">
+    <div class="md:w-3/4 lg:w-1/2">
+      <h2 class="py-4 text-3xl font-medium text-fg">Login</h2>
 
       <!-- Form Card div -->
-      <div class="flex flex-col px-16 py-8 min-h-fit border-2 border-neutral-200 rounded-4xl">
+      <div class="flex min-h-fit flex-col rounded-4xl border-2 border-border px-16 py-8">
         <form @submit.prevent="handleSubmit">
           <!-- Username field -->
           <div class="flex flex-col pt-4">
-            <label class="text-white" for="identifier">Username</label>
+            <label class="text-fg" for="identifier">Username</label>
             <BaseInput
               id="identifier"
               v-model="identifier"
@@ -67,7 +72,9 @@ async function handleSubmit() {
 
           <!-- PW field -->
           <div class="flex flex-col pt-4">
-            <label class="text-white" for="password">Password</label>
+            <div class="flex items-baseline justify-between gap-4">
+              <label class="text-fg" for="password">Password</label>
+            </div>
             <BaseInput
               id="password"
               v-model="password"
@@ -77,20 +84,26 @@ async function handleSubmit() {
               autocomplete="current-password"
               :error="!!passwordErr"
             />
+            <RouterLink
+              class="text-sm pt-2 text-fg-subtle underline hover:text-fg"
+              :to="{ name: 'forgotPassword' }"
+            >
+              Forgot password?
+            </RouterLink>
           </div>
 
-          <!-- err message -->
-          <p v-if="errorMessage" class="text-red-600 mx-0.5 pt-2">{{ errorMessage }}</p>
+          <!-- err / success -->
+          <p v-if="errorMessage" class="mx-0.5 pt-2 text-danger">{{ errorMessage }}</p>
+          <p v-else-if="successMessage" class="mx-0.5 pt-2 text-success">{{ successMessage }}</p>
 
           <!-- submit -->
-          <div class="flex flex-col items-start sm:flex-row sm:items-center sm:justify-between py-8">
+          <div
+            class="flex flex-col items-start py-8 sm:flex-row sm:items-center sm:justify-between"
+          >
             <!-- Register link -->
-            <p class="text-white my-4 flex gap-2">
+            <p class="my-4 flex gap-2 text-fg">
               Don't have an account?
-              <RouterLink
-                class="text-white underline hover:text-neutral-400"
-                :to="{ name: 'register' }"
-              >
+              <RouterLink class="text-fg underline hover:text-fg-subtle" :to="{ name: 'register' }">
                 Create one</RouterLink
               >
             </p>

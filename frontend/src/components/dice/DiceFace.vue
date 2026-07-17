@@ -43,12 +43,12 @@ const sizeClass = computed(() => {
     v-if="src"
     :src="src"
     :alt="`${diceType} showing ${face}`"
-    class="object-contain invert transition-opacity duration-150"
+    class="object-contain transition-opacity duration-150"
     :class="[sizeClass, dimmed ? 'opacity-35' : 'opacity-100']"
   />
   <div
     v-else
-    class="flex items-center justify-center rounded-lg bg-neutral-700 text-sm font-semibold text-white"
+    class="flex items-center justify-center rounded-lg bg-surface-muted text-sm font-semibold text-fg"
     :class="sizeClass"
   >
     {{ face }}

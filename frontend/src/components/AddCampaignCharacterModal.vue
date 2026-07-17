@@ -92,14 +92,14 @@ onMounted(async () => {
 <template>
   <Teleport to="body">
     <div
-      class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-overlay flex items-center justify-center z-50"
       @click.self="emit('close')"
     >
-      <div class="bg-white rounded-xl p-6 w-full max-w-md flex flex-col gap-4">
+      <div class="bg-surface rounded-xl p-6 w-full max-w-md flex flex-col gap-4">
         <h3 class="text-xl">Add {{ typeLabel }}</h3>
 
-        <p v-if="isLoading" class="text-neutral-500 text-sm">Loading your characters...</p>
-        <p v-else-if="availableCharacters.length === 0" class="text-neutral-500 text-sm">
+        <p v-if="isLoading" class="text-fg-subtle text-sm">Loading your characters...</p>
+        <p v-else-if="availableCharacters.length === 0" class="text-fg-subtle text-sm">
           No available characters to add. Create a new one instead.
         </p>
 
@@ -107,8 +107,8 @@ onMounted(async () => {
           <label
             v-for="entry in availableCharacters"
             :key="entry.character.id"
-            class="flex items-center gap-3 rounded-lg border px-3 py-2 cursor-pointer hover:bg-neutral-50"
-            :class="selectedId === entry.character.id ? 'border-purple-600 bg-purple-50' : 'border-neutral-200'"
+            class="flex items-center gap-3 rounded-lg border px-3 py-2 cursor-pointer hover:bg-surface-muted"
+            :class="selectedId === entry.character.id ? 'border-accent bg-accent-muted' : 'border-border'"
           >
             <input
               v-model="selectedId"
@@ -119,12 +119,12 @@ onMounted(async () => {
             />
             <div class="min-w-0">
               <p class="font-medium truncate">{{ entry.character.name }}</p>
-              <p class="text-sm text-neutral-500 capitalize">{{ characterSubtitle(entry.character) }}</p>
+              <p class="text-sm text-fg-subtle capitalize">{{ characterSubtitle(entry.character) }}</p>
             </div>
           </label>
         </div>
 
-        <p v-if="errorMessage" class="text-red-600 text-sm">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="text-danger text-sm">{{ errorMessage }}</p>
 
         <div class="flex justify-end gap-2">
           <BaseButton type="button" variant="danger" @click="emit('close')">Cancel</BaseButton>

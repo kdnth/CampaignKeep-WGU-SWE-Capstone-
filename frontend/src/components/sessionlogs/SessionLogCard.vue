@@ -14,13 +14,13 @@ defineEmits<{
 <template>
   <button
     type="button"
-    class="w-full rounded-xl bg-white p-4 text-left transition-colors hover:border-4 hover:border-purple-600"
+    class="w-full rounded-xl bg-surface p-4 text-left transition-colors hover:border-4 hover:border-accent"
     @click="$emit('select')"
   >
-    <h3 class="truncate text-lg font-medium text-black">
+    <h3 class="truncate text-lg font-medium text-fg">
       {{ log.title.trim() || 'Untitled Session' }}
     </h3>
-    <p class="mt-1 text-sm text-neutral-600">
+    <p class="mt-1 text-sm text-fg-muted">
       {{ formatDateStr(log.createdOn) }}
     </p>
   </button>

@@ -43,10 +43,10 @@ async function handleSubmit() {
 <template>
   <Teleport to="body">
     <div
-      class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-overlay flex items-center justify-center z-50"
       @click.self="emit('close')"
     >
-      <div class="bg-white rounded-xl p-6 w-full max-w-sm flex flex-col gap-4">
+      <div class="bg-surface rounded-xl p-6 w-full max-w-sm flex flex-col gap-4">
         <h3 class="text-xl">Add Member</h3>
 
         <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
@@ -63,7 +63,7 @@ async function handleSubmit() {
             </select>
           </div>
 
-          <p v-if="errorMessage" class="text-red-600 text-sm">{{ errorMessage }}</p>
+          <p v-if="errorMessage" class="text-danger text-sm">{{ errorMessage }}</p>
 
           <div class="flex justify-end gap-2">
             <BaseButton type="button" variant="danger" @click="emit('close')">Cancel</BaseButton>

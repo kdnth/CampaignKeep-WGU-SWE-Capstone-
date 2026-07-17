@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
+import VerifyEmailBanner from '@/components/VerifyEmailBanner.vue'
 import { useAuthStore } from './stores/auth'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -21,5 +22,6 @@ onMounted(async () => {
 
 <template>
   <NavBar />
+  <VerifyEmailBanner />
   <RouterView />
 </template>

@@ -95,13 +95,13 @@ async function handleConfirm() {
 <template>
   <div class="flex flex-col gap-3">
     <div class="flex items-center justify-between">
-      <h3 class="text-white text-lg">Members</h3>
+      <h3 class="text-fg text-lg">Members</h3>
       <BaseButton variant="primary" class="text-sm" @click="showAddModal = true"
         >Add Member</BaseButton
       >
     </div>
 
-    <p v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+    <p v-if="errorMessage" class="text-danger text-sm">{{ errorMessage }}</p>
 
     <CampaignMemberCard
       v-for="member in members"

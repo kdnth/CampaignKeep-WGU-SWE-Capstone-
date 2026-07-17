@@ -10,9 +10,9 @@ defineProps<{
   <span
     class="rounded-lg px-3 py-1 text-sm font-semibold capitalize"
     :class="{
-      'bg-green-900 text-green-200': status === 'alive',
-      'bg-yellow-900 text-yellow-200': status === 'down',
-      'bg-red-900 text-red-200': status === 'dead',
+      'bg-success-muted text-success': status === 'alive',
+      'bg-warning-muted text-warning': status === 'down',
+      'bg-danger-muted text-danger': status === 'dead',
     }"
   >
     {{ status }}

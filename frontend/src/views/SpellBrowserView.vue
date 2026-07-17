@@ -6,8 +6,8 @@ import SpellBrowser from '@/components/spells/SpellBrowser.vue'
 <template>
   <div class="flex w-full flex-col gap-4 p-8">
     <BackToLink page="home" link-name="Home" />
-    <h1 class="text-3xl text-white">Spell Browser</h1>
-    <p class="text-neutral-400">Browse the SRD spell catalog. Click a card to flip for details.</p>
+    <h1 class="text-3xl text-fg">Spell Browser</h1>
+    <p class="text-fg-subtle">Browse the SRD spell catalog. Click a card to flip for details.</p>
     <SpellBrowser mode="browse" />
   </div>
 </template>

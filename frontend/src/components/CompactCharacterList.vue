@@ -35,17 +35,17 @@ function handleClick(id: number) {
 <template>
   <div class="flex flex-col gap-3">
     <div class="flex items-center justify-between">
-      <h4 class="text-3xl text-white">My Characters</h4>
-      <RouterLink :to="{ name: 'characters' }" class="text-sm text-purple-400 hover:underline">
+      <h4 class="text-3xl text-fg">My Characters</h4>
+      <RouterLink :to="{ name: 'characters' }" class="text-sm text-accent hover:underline">
         View all
       </RouterLink>
     </div>
 
-    <p v-if="isLoading" class="text-neutral-300">Loading campaigns...</p>
-    <p v-else-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+    <p v-if="isLoading" class="text-fg-muted">Loading campaigns...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
     <p
       v-else-if="nonplayableCharacters.length === 0 && playableCharacters.length === 0"
-      class="text-neutral-300"
+      class="text-fg-muted"
     >
       No characters yet. Create one to get started.
     </p>

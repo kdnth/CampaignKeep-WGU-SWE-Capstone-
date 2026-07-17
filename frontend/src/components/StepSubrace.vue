@@ -25,8 +25,8 @@ const subraceId = computed({
 </script>
 
 <template>
-  <h2 class="text-4xl text-white my-4">Subrace</h2>
-  <div class="space-y-4 text-white border-2 border-white rounded-2xl p-8">
+  <h2 class="text-4xl text-fg my-4">Subrace</h2>
+  <div class="space-y-4 text-fg border-2 border-border-strong rounded-2xl p-8">
     <div class="flex items-center justify-between">
       <span>None</span>
       <input type="radio" name="subrace" class="mx-2" :value="null" v-model="subraceId" />

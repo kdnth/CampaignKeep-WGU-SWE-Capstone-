@@ -49,3 +49,32 @@ GET {{baseUrl}}/api/users/me
 ### Get current user (bad token — expect 401)
 GET {{baseUrl}}/api/users/me
 Authorization: Bearer thisisnotavalidtoken
+
+### Forgot password (always 200 — check backend logs for console email link)
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}
+
+### Reset password (paste token from console email link)
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "{{resetToken}}",
+  "newPassword": "newpassword123"
+}
+
+### Resend verification email (authenticated)
+POST {{baseUrl}}/api/users/me/verification-email
+Authorization: Bearer {{token}}
+
+### Verify email (paste token from console email link)
+POST {{baseUrl}}/api/auth/verify-email
+Content-Type: application/json
+
+{
+  "token": "{{verifyToken}}"
+}

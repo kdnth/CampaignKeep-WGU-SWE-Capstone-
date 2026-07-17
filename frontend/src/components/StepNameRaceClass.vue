@@ -35,12 +35,12 @@ const canProceed = () => name.value.trim().length > 0 && raceId.value > 0 && cla
 </script>
 
 <template>
-  <h2 class="text-4xl text-white my-4">Basic Character Information</h2>
-  <div class="space-y-4 text-white border-2 border-white rounded-2xl p-8">
+  <h2 class="text-4xl text-fg my-4">Basic Character Information</h2>
+  <div class="space-y-4 text-fg border-2 border-border-strong rounded-2xl p-8">
     <div class="space-y-1">
       <label for="name">Name</label>
       <input
-        class="text-black rounded-lg mx-2 cursor-auto"
+        class="bg-input text-fg rounded-lg mx-2 cursor-auto"
         id="name"
         v-model="name"
         placeholder="Character Name"
@@ -49,7 +49,7 @@ const canProceed = () => name.value.trim().length > 0 && raceId.value > 0 && cla
 
     <div class="space-y-1">
       <label for="race">Race</label>
-      <select class="rounded-lg mx-2 text-neutral-800" id="race" v-model.number="raceId">
+      <select class="bg-input rounded-lg mx-2 text-fg" id="race" v-model.number="raceId">
         <option :value="0" disabled>Select a race</option>
         <option v-for="race in raceStore.races" :key="race.id" :value="race.id">
           {{ race.name }}
@@ -59,7 +59,7 @@ const canProceed = () => name.value.trim().length > 0 && raceId.value > 0 && cla
 
     <div class="space-y-1">
       <label for="class">Class</label>
-      <select class="rounded-lg mx-2 text-neutral-800" id="class" v-model.number="classId">
+      <select class="bg-input rounded-lg mx-2 text-fg" id="class" v-model.number="classId">
         <option :value="0" disabled>Select a class</option>
         <option v-for="dndClass in dndClassStore.classes" :key="dndClass.id" :value="dndClass.id">
           {{ dndClass.name }}

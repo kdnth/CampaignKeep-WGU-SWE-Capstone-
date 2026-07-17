@@ -75,9 +75,9 @@ function handleClick(id: number) {
 <template>
   <div class="flex w-full flex-col gap-4 p-8">
     <BackToLink page="home" link-name="Home" />
-    <p v-if="isLoading" class="text-neutral-300">Loading campaigns...</p>
-    <p v-else-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
-    <p v-else-if="campaigns.length === 0" class="text-neutral-300">
+    <p v-if="isLoading" class="text-fg-muted">Loading campaigns...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+    <p v-else-if="campaigns.length === 0" class="text-fg-muted">
       No campaigns yet. Create one to get started.
     </p>
 

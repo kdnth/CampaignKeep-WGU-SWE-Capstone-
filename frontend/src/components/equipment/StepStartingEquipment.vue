@@ -83,15 +83,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-6 text-white">
+  <div class="space-y-6 text-fg">
     <h2 class="text-xl font-semibold">Starting Equipment</h2>
-    <p class="text-sm text-neutral-400">
+    <p class="text-sm text-fg-subtle">
       Choose your class starting gear. Armor with a strength requirement is disabled if you don't
       meet it.
     </p>
 
-    <p v-if="isLoading" class="text-neutral-400">Loading options...</p>
-    <p v-else-if="errorMessage" class="text-red-400">{{ errorMessage }}</p>
+    <p v-if="isLoading" class="text-fg-subtle">Loading options...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
     <template v-else>
       <div>
@@ -100,7 +100,7 @@ onMounted(async () => {
           <label
             v-for="item in weaponOptions"
             :key="item.id"
-            class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-600 px-3 py-2 hover:bg-neutral-800"
+            class="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-3 py-2 hover:bg-surface-muted"
           >
             <input v-model="weaponItemId" type="radio" :value="item.id" />
             <span>{{ item.name }}</span>
@@ -114,8 +114,8 @@ onMounted(async () => {
           <label
             v-for="item in armorOptions"
             :key="item.id"
-            class="flex items-center gap-3 rounded-lg border border-neutral-600 px-3 py-2"
-            :class="isArmorDisabled(item) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-neutral-800'"
+            class="flex items-center gap-3 rounded-lg border border-border px-3 py-2"
+            :class="isArmorDisabled(item) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-surface-muted'"
           >
             <input
               v-model="armorItemId"
@@ -125,7 +125,7 @@ onMounted(async () => {
             />
             <span>
               {{ item.name }}
-              <span v-if="item.strMinimum" class="text-xs text-neutral-400">
+              <span v-if="item.strMinimum" class="text-xs text-fg-subtle">
                 (STR {{ item.strMinimum }})
               </span>
             </span>
@@ -137,7 +137,7 @@ onMounted(async () => {
         <label class="mb-2 block text-sm font-medium">Shield (optional)</label>
         <div class="space-y-2">
           <label
-            class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-600 px-3 py-2 hover:bg-neutral-800"
+            class="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-3 py-2 hover:bg-surface-muted"
           >
             <input v-model="shieldItemId" type="radio" :value="null" />
             <span>None</span>
@@ -145,7 +145,7 @@ onMounted(async () => {
           <label
             v-for="item in shieldOptions"
             :key="item.id"
-            class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-600 px-3 py-2 hover:bg-neutral-800"
+            class="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-3 py-2 hover:bg-surface-muted"
           >
             <input v-model="shieldItemId" type="radio" :value="item.id" />
             <span>{{ item.name }}</span>

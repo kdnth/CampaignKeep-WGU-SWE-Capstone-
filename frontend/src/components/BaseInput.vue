@@ -16,10 +16,10 @@ defineEmits<{
     :type="type"
     :value="modelValue"
     @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    class="w-full p-2 border-2 rounded-lg bg-neutral-400 placeholder:text-neutral-700"
+    class="w-full rounded-lg border-2 bg-input p-2 text-fg placeholder:text-placeholder"
     :class="{
-      'border-white': !error,
-      'border-red-500': error,
+      'border-input-border': !error,
+      'border-danger': error,
     }"
   />
 </template>

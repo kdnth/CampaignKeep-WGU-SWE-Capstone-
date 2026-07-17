@@ -320,15 +320,15 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col gap-4">
     <div v-if="title" class="flex flex-wrap items-center justify-between gap-3">
-      <h2 class="text-xl text-white">{{ title }}</h2>
+      <h2 class="text-xl text-fg">{{ title }}</h2>
       <div v-if="mode === 'spellbook'" class="flex gap-2">
         <button
           type="button"
           class="rounded-lg px-3 py-1 text-sm transition-colors"
           :class="
             viewMode === 'spellbook'
-              ? 'bg-purple-600 text-white'
-              : 'bg-neutral-800 text-neutral-300 hover:text-white'
+              ? 'bg-accent text-white'
+              : 'bg-surface-muted text-fg-muted hover:text-fg'
           "
           @click="viewMode = 'spellbook'"
         >
@@ -339,8 +339,8 @@ onMounted(async () => {
           class="rounded-lg px-3 py-1 text-sm transition-colors"
           :class="
             viewMode === 'browse'
-              ? 'bg-purple-600 text-white'
-              : 'bg-neutral-800 text-neutral-300 hover:text-white'
+              ? 'bg-accent text-white'
+              : 'bg-surface-muted text-fg-muted hover:text-fg'
           "
           @click="viewMode = 'browse'"
         >
@@ -351,7 +351,7 @@ onMounted(async () => {
 
     <div
       v-if="mode === 'select' && quotas"
-      class="rounded-xl border border-neutral-600 bg-neutral-900 p-4 text-sm text-neutral-200"
+      class="rounded-xl border border-border bg-surface p-4 text-sm text-fg-muted"
     >
       <p>
         Cantrips: {{ cantripCount }} / {{ quotas.cantrips }} · Level 1 spells: {{ levelOneCount }} /
@@ -361,20 +361,20 @@ onMounted(async () => {
 
     <div v-if="showToolbar" class="flex flex-wrap items-end gap-4">
       <div class="flex min-w-48 flex-1 flex-col gap-1">
-        <label class="text-sm text-neutral-300">Search</label>
+        <label class="text-sm text-fg-muted">Search</label>
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search by name..."
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 text-fg"
         />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300">Level</label>
+        <label class="text-sm text-fg-muted">Level</label>
         <select
           v-model="levelFilter"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 text-fg"
         >
           <option value="all">All</option>
           <option :value="0">Cantrip</option>
@@ -383,10 +383,10 @@ onMounted(async () => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300">School</label>
+        <label class="text-sm text-fg-muted">School</label>
         <select
           v-model="schoolFilter"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 capitalize text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 capitalize text-fg"
         >
           <option value="all">All</option>
           <option v-for="school in schools" :key="school" :value="school">
@@ -396,10 +396,10 @@ onMounted(async () => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300">Sort</label>
+        <label class="text-sm text-fg-muted">Sort</label>
         <select
           v-model="sortOrder"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 text-fg"
         >
           <option value="level">Level</option>
           <option value="name">Name</option>
@@ -408,24 +408,24 @@ onMounted(async () => {
 
       <label
         v-if="classIndex && mode !== 'spellbook'"
-        class="flex items-center gap-2 pb-2 text-sm text-neutral-200"
+        class="flex items-center gap-2 pb-2 text-sm text-fg-muted"
       >
         <input v-model="showAll" type="checkbox" class="rounded" />
         Show all
       </label>
     </div>
 
-    <p v-if="spellStore.isSyncing" class="text-sm text-neutral-400">
+    <p v-if="spellStore.isSyncing" class="text-sm text-fg-subtle">
       Syncing spell catalog. This may take a moment...
     </p>
-    <p v-if="isLoading" class="text-neutral-300">Loading spells...</p>
-    <p v-else-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
-    <p v-else-if="filteredSpells.length === 0" class="text-neutral-400">
+    <p v-if="isLoading" class="text-fg-muted">Loading spells...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+    <p v-else-if="filteredSpells.length === 0" class="text-fg-subtle">
       No spells match your filters.
     </p>
 
     <template v-else>
-      <p class="text-sm text-neutral-400">
+      <p class="text-sm text-fg-subtle">
         Showing {{ pageStart }}–{{ pageEnd }} of {{ filteredSpells.length }} spells
       </p>
 
@@ -453,18 +453,18 @@ onMounted(async () => {
       >
         <button
           type="button"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-sm text-fg-muted transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
           :disabled="currentPage === 1"
           @click="goToPage(currentPage - 1)"
         >
           Previous
         </button>
-        <span class="text-sm text-neutral-300">
+        <span class="text-sm text-fg-muted">
           Page {{ currentPage }} of {{ totalPages }}
         </span>
         <button
           type="button"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-sm text-fg-muted transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
           :disabled="currentPage === totalPages"
           @click="goToPage(currentPage + 1)"
         >

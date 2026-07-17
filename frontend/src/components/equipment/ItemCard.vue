@@ -82,79 +82,79 @@ function toggleFlip() {
     <div class="item-flip-inner h-full" :class="{ 'is-flipped': isFlipped }">
       <!-- Front -->
       <div
-        class="item-flip-face flex h-full cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 bg-neutral-900 p-4 text-center"
+        class="item-flip-face flex h-full cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 bg-surface p-4 text-center"
         :class="rarityClass"
       >
-        <OhVueIcon :name="iconName" scale="2.2" class="text-white" />
+        <OhVueIcon :name="iconName" scale="2.2" class="text-fg" />
         <div>
-          <h3 class="text-base font-semibold leading-tight text-white">{{ item.name }}</h3>
-          <p v-if="quantity && quantity > 1" class="text-xs text-neutral-400">x{{ quantity }}</p>
+          <h3 class="text-base font-semibold leading-tight text-fg">{{ item.name }}</h3>
+          <p v-if="quantity && quantity > 1" class="text-xs text-fg-subtle">x{{ quantity }}</p>
         </div>
-        <p class="text-sm text-neutral-300">{{ item.weight ?? 0 }} lb.</p>
-        <p class="text-xs text-neutral-500">Click to flip</p>
+        <p class="text-sm text-fg-muted">{{ item.weight ?? 0 }} lb.</p>
+        <p class="text-xs text-fg-subtle">Click to flip</p>
       </div>
 
       <!-- Back -->
       <div
-        class="item-flip-face item-flip-back flex h-full cursor-pointer flex-col rounded-2xl border-2 bg-neutral-900 p-4"
+        class="item-flip-face item-flip-back flex h-full cursor-pointer flex-col rounded-2xl border-2 bg-surface p-4"
         :class="rarityClass"
       >
-        <div class="min-h-0 flex-1 space-y-1.5 overflow-y-auto text-sm text-neutral-100">
-          <h3 class="font-semibold text-white">{{ item.name }}</h3>
-          <p class="text-xs text-neutral-400 italic">
+        <div class="min-h-0 flex-1 space-y-1.5 overflow-y-auto text-sm text-fg">
+          <h3 class="font-semibold text-fg">{{ item.name }}</h3>
+          <p class="text-xs text-fg-subtle italic">
             {{ formatRarityLabel(item.rarity) }} ∙ {{ item.effectiveValue }} gp
             <span
               v-if="item.value != null && item.value !== item.effectiveValue"
-              class="text-neutral-500"
+              class="text-fg-subtle"
             >
               (base {{ item.value }})
             </span>
             ∙ {{ item.weight ?? 0 }} lb.
           </p>
-          <p class="capitalize text-neutral-400">
+          <p class="capitalize text-fg-subtle">
             {{ itemType }}
             <span v-if="item.isMagical"> ∙ Magical</span>
           </p>
           <template v-if="item.itemType === 'weapon'">
             <p v-if="item.damage">
-              <span class="text-neutral-400">Damage:</span>
+              <span class="text-fg-subtle">Damage:</span>
               {{ item.damage }}
               <span v-if="item.damageType"> {{ item.damageType }}</span>
             </p>
             <p v-if="item.weaponRange" class="capitalize">
-              <span class="text-neutral-400">Range type:</span>
+              <span class="text-fg-subtle">Range type:</span>
               {{ item.weaponRange }}
               <span v-if="item.range"> ({{ item.range }} ft.)</span>
             </p>
             <p v-if="item.weaponCategoryName">
-              <span class="text-neutral-400">Category:</span>
+              <span class="text-fg-subtle">Category:</span>
               {{ item.weaponCategoryName }}
             </p>
           </template>
 
           <template v-if="item.itemType === 'armor'">
             <p v-if="item.armorCategoryName" class="capitalize">
-              <span class="text-neutral-400">Armor:</span>
+              <span class="text-fg-subtle">Armor:</span>
               {{ item.armorCategoryName }}
             </p>
             <p v-if="item.baseAc != null">
-              <span class="text-neutral-400">Base AC:</span>
+              <span class="text-fg-subtle">Base AC:</span>
               {{ item.baseAc }}
             </p>
             <p v-if="item.maxDexBonus != null">
-              <span class="text-neutral-400">Max DEX:</span>
+              <span class="text-fg-subtle">Max DEX:</span>
               {{ item.maxDexBonus }}
             </p>
             <p v-if="item.strMinimum != null">
-              <span class="text-neutral-400">STR Min:</span>
+              <span class="text-fg-subtle">STR Min:</span>
               {{ item.strMinimum }}
             </p>
           </template>
 
-          <p v-if="item.description" class="whitespace-pre-line text-neutral-300">
+          <p v-if="item.description" class="whitespace-pre-line text-fg-muted">
             {{ item.description }}
           </p>
-          <p v-else class="text-neutral-500">No description.</p>
+          <p v-else class="text-fg-subtle">No description.</p>
         </div>
       </div>
     </div>

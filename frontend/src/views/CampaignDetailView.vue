@@ -33,8 +33,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <p v-if="isLoading" class="p-8 text-neutral-300">Loading campaign...</p>
-  <p v-else-if="errorMessage" class="p-8 text-red-500">{{ errorMessage }}</p>
+  <p v-if="isLoading" class="p-8 text-fg-muted">Loading campaign...</p>
+  <p v-else-if="errorMessage" class="p-8 text-danger">{{ errorMessage }}</p>
   <CampaignMasterDetailView
     v-else-if="activeCampaign?.callerRole === 'master'"
     :campaign-id="campaignId"

@@ -58,15 +58,15 @@ async function handleSubmit() {
 <template>
   <div class="p-2 w-full max-w-full flex justify-center">
     <div class="w-full px-2 sm:px-0 sm:w-3/4 lg:w-1/2">
-      <h2 class="text-2xl sm:text-3xl py-4 font-medium text-white">Create an account</h2>
+      <h2 class="text-2xl sm:text-3xl py-4 font-medium text-fg">Create an account</h2>
 
       <div
-        class="flex flex-col px-4 sm:px-8 md:px-16 py-6 sm:py-8 min-h-fit border-2 border-neutral-200 rounded-4xl"
+        class="flex flex-col px-4 sm:px-8 md:px-16 py-6 sm:py-8 min-h-fit border-2 border-border rounded-4xl"
       >
         <form @submit.prevent="handleSubmit">
           <div class="flex flex-col pt-4 pb-2">
             <!-- username field -->
-            <label class="text-white" for="usernameInput">Choose a username</label>
+            <label class="text-fg" for="usernameInput">Choose a username</label>
             <BaseInput
               id="usernameInput"
               v-model="usernameInput"
@@ -79,7 +79,7 @@ async function handleSubmit() {
           </div>
           <!-- email field -->
           <div class="flex flex-col pt-4 pb-2">
-            <label class="text-white" for="email">Enter your email</label>
+            <label class="text-fg" for="email">Enter your email</label>
             <BaseInput
               id="email"
               v-model="email"
@@ -93,7 +93,7 @@ async function handleSubmit() {
           <!-- PW fields -->
           <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:gap-6">
             <div class="flex flex-col pt-4 pb-2 flex-1 min-w-0">
-              <label class="text-white" for="password">Password</label>
+              <label class="text-fg" for="password">Password</label>
               <BaseInput
                 id="password"
                 v-model="password"
@@ -105,7 +105,7 @@ async function handleSubmit() {
               />
             </div>
             <div class="flex flex-col pt-4 pb-2 flex-1 min-w-0">
-              <label class="text-white" for="passwordConfirm">Confirm password</label>
+              <label class="text-fg" for="passwordConfirm">Confirm password</label>
               <BaseInput
                 id="passwordConfirm"
                 v-model="passwordConfirm"
@@ -118,7 +118,7 @@ async function handleSubmit() {
             </div>
           </div>
           <!-- ERR MSG -->
-          <p v-if="errorMessage" class="text-red-500 mx-0.5 my-2">{{ errorMessage }}</p>
+          <p v-if="errorMessage" class="text-danger mx-0.5 my-2">{{ errorMessage }}</p>
 
           <!-- submit -->
           <div class="flex flex-col items-stretch gap-4 py-6 sm:py-8">
@@ -126,9 +126,9 @@ async function handleSubmit() {
               {{ isLoading ? 'Creating account...' : 'Create account' }}
             </BaseButton>
 
-            <p class="text-white text-center sm:text-left flex flex-col sm:flex-row sm:gap-2">
+            <p class="text-fg text-center sm:text-left flex flex-col sm:flex-row sm:gap-2">
               Already have an account?
-              <RouterLink class="text-white underline hover:text-neutral-400" :to="{ name: 'login' }">
+              <RouterLink class="text-fg underline hover:text-fg-subtle" :to="{ name: 'login' }">
                 Log in
               </RouterLink>
             </p>

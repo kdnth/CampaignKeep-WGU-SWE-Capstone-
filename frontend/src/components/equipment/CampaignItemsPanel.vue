@@ -138,7 +138,7 @@ onMounted(loadItems)
 <template>
   <div class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <p class="text-sm text-neutral-400">
+      <p class="text-sm text-fg-subtle">
         Reference gear available to this campaign plus any custom items you create.
       </p>
       <CreateCampaignItemModal :campaign-id="campaignId" @created="loadItems" />
@@ -146,22 +146,22 @@ onMounted(loadItems)
 
     <div class="flex flex-wrap items-end gap-3">
       <div class="flex min-w-[12rem] flex-1 flex-col gap-1">
-        <label class="text-sm text-neutral-300" for="item-search">Search</label>
+        <label class="text-sm text-fg-muted" for="item-search">Search</label>
         <input
           id="item-search"
           v-model="searchQuery"
           type="text"
           placeholder="Search items..."
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 text-fg"
         />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300" for="item-type-filter">Type</label>
+        <label class="text-sm text-fg-muted" for="item-type-filter">Type</label>
         <select
           id="item-type-filter"
           v-model="typeFilter"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 pr-8 py-2 capitalize text-white"
+          class="rounded-lg border border-border bg-surface-muted pr-8 py-2 capitalize text-fg"
         >
           <option value="all">All types</option>
           <option v-for="type in itemTypes" :key="type" :value="type">
@@ -171,11 +171,11 @@ onMounted(loadItems)
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300" for="item-rarity-filter">Rarity</label>
+        <label class="text-sm text-fg-muted" for="item-rarity-filter">Rarity</label>
         <select
           id="item-rarity-filter"
           v-model="rarityFilter"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 pl-2 pr-8 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted pl-2 pr-8 py-2 text-fg"
         >
           <option value="all">All rarities</option>
           <option v-for="rarity in rarities" :key="rarity" :value="rarity">
@@ -185,11 +185,11 @@ onMounted(loadItems)
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300" for="item-magical-filter">Magic</label>
+        <label class="text-sm text-fg-muted" for="item-magical-filter">Magic</label>
         <select
           id="item-magical-filter"
           v-model="magicalFilter"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 text-fg"
         >
           <option value="all">All</option>
           <option value="magical">Magical</option>
@@ -198,11 +198,11 @@ onMounted(loadItems)
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm text-neutral-300" for="item-sort">Sort</label>
+        <label class="text-sm text-fg-muted" for="item-sort">Sort</label>
         <select
           id="item-sort"
           v-model="sortOrder"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-white"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-2 text-fg"
         >
           <option value="name-asc">Name (A–Z)</option>
           <option value="name-desc">Name (Z–A)</option>
@@ -213,13 +213,13 @@ onMounted(loadItems)
       </div>
     </div>
 
-    <p v-if="isLoading" class="text-neutral-400">Loading items...</p>
-    <p v-else-if="errorMessage" class="text-red-400">{{ errorMessage }}</p>
-    <p v-else-if="filteredItems.length === 0" class="text-neutral-400">
+    <p v-if="isLoading" class="text-fg-subtle">Loading items...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+    <p v-else-if="filteredItems.length === 0" class="text-fg-subtle">
       {{ campaignItems.length === 0 ? 'No items available yet.' : 'No items match your filters.' }}
     </p>
     <template v-else>
-      <p class="text-sm text-neutral-400">
+      <p class="text-sm text-fg-subtle">
         Showing {{ pageStart }}–{{ pageEnd }} of {{ filteredItems.length }} items
       </p>
 
@@ -228,16 +228,16 @@ onMounted(loadItems)
       <div v-if="totalPages > 1" class="flex flex-wrap items-center justify-center gap-3 pt-2">
         <button
           type="button"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-sm text-fg-muted transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
           :disabled="currentPage === 1"
           @click="goToPage(currentPage - 1)"
         >
           Previous
         </button>
-        <span class="text-sm text-neutral-300"> Page {{ currentPage }} of {{ totalPages }} </span>
+        <span class="text-sm text-fg-muted"> Page {{ currentPage }} of {{ totalPages }} </span>
         <button
           type="button"
-          class="rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+          class="rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-sm text-fg-muted transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
           :disabled="currentPage === totalPages"
           @click="goToPage(currentPage + 1)"
         >

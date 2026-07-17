@@ -133,35 +133,39 @@ onMounted(async () => {
   <div class="flex w-full flex-col gap-4 p-8">
     <BackToLink page="characters" link-name="My Characters" />
 
-    <p v-if="isLoading" class="text-neutral-300">Loading character...</p>
-    <p v-else-if="errorMessage && !activeCharacter" class="text-red-500">{{ errorMessage }}</p>
+    <p v-if="isLoading" class="text-fg-muted">Loading character...</p>
+    <p v-else-if="errorMessage && !activeCharacter" class="text-danger">{{ errorMessage }}</p>
 
     <template v-else-if="activeCharacter">
       <div class="flex flex-wrap items-start gap-6">
-        <div class="rounded-xl bg-purple-400 p-4">
-          <CharacterAvatar
-            :race-name="activeCharacter.raceName"
-            :class-name="classLabel"
-            size="lg"
-          />
+        <div class="flex flex-col items-center">
+          <div class="rounded-xl bg-accent p-4">
+            <CharacterAvatar
+              :race-name="activeCharacter.raceName"
+              :class-name="classLabel"
+              size="lg"
+            />
+          </div>
         </div>
         <div class="flex flex-1 flex-wrap items-start justify-between gap-4">
           <div>
-            <p class="text-sm uppercase tracking-wide text-purple-400">{{ typeLabel }}</p>
-            <h1 class="text-3xl text-white">
+            <p class="text-sm uppercase tracking-wide text-accent">{{ typeLabel }}</p>
+            <h1 class="text-3xl text-fg">
               {{ activeCharacter.name }}
             </h1>
-            <p class="text-neutral-300 capitalize">
+            <p class="text-fg-muted capitalize">
               {{ activeCharacter.raceName }}
               <span v-if="activeCharacter.subraceName">({{ activeCharacter.subraceName }})</span>
-              <span> • {{ activeCharacter.classNames.join(', ') }}</span>
+              <span v-if="activeCharacter.classNames.length > 0">
+                • {{ activeCharacter.classNames.join(', ') }}</span
+              >
               <span> • {{ activeCharacter.backgroundName }}</span>
             </p>
-            <p class="text-neutral-300 capitalize italic">
+            <p class="text-fg-muted capitalize italic">
               {{ activeCharacter.languageNames.join(', ') || '' }}
             </p>
             <div
-              class="text-md my-4 py-2 border-t-2 border-white font-bold flex justify-between items-start"
+              class="text-md my-1 py-1 border-t border-border-strong flex justify-between items-start"
             >
               <StatLabel stat="hp" :value="activeCharacter.hitPoints"> </StatLabel>
               <StatLabel stat="ac" :value="activeCharacter.armorClass" />
@@ -173,41 +177,34 @@ onMounted(async () => {
         </div>
       </div>
 
-      <section class="rounded-2xl border-2 border-white p-6 text-white">
+      <section class="rounded-2xl border-2 border-border-strong p-6 text-fg">
         <h2 class="mb-4 text-xl">Ability Scores</h2>
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
           <div v-for="ability in abilities" :key="ability" class="text-center">
-            <p class="text-sm uppercase text-neutral-300">{{ ability.slice(0, 3) }}</p>
+            <p class="text-sm uppercase text-fg-muted">{{ ability.slice(0, 3) }}</p>
             <p class="text-2xl">{{ activeCharacter[ability] }}</p>
-            <p class="text-sm text-neutral-400">
+            <p class="text-sm text-fg-subtle">
               {{ formatModifier(Math.floor((activeCharacter[ability] - 10) / 2)) }}
             </p>
           </div>
         </div>
       </section>
 
-      <section class="rounded-2xl border-2 border-white p-6 text-white">
+      <section class="rounded-2xl border-2 border-border-strong p-6 text-fg">
         <h2 class="mb-4 text-xl">Inventory</h2>
-        <p v-if="isLoadingInventory" class="text-neutral-300">Loading inventory...</p>
-        <ItemsListPanel
-          v-else
-          :entries="inventoryEntries"
-          empty-message="No items in inventory."
-        />
-        <p
-          v-if="inventoryStore.inventory"
-          class="mt-3 text-sm text-neutral-400"
-        >
+        <p v-if="isLoadingInventory" class="text-fg-muted">Loading inventory...</p>
+        <ItemsListPanel v-else :entries="inventoryEntries" empty-message="No items in inventory." />
+        <p v-if="inventoryStore.inventory" class="mt-3 text-sm text-fg-subtle">
           Weight: {{ inventoryStore.inventory.totalWeight }} /
           {{ inventoryStore.inventory.carryingCapacity }} lb. · Gold:
           {{ inventoryStore.inventory.gold }} gp
         </p>
       </section>
 
-      <section v-if="showSpellbook" class="rounded-2xl border-2 border-white p-6 text-white">
+      <section v-if="showSpellbook" class="rounded-2xl border-2 border-border-strong p-6 text-fg">
         <h2 class="mb-4 text-xl">Spellbook</h2>
-        <p v-if="isLoadingSpells" class="text-neutral-300">Loading spellbook...</p>
-        <p v-else-if="spellStore.characterSpells.length === 0" class="text-neutral-400">
+        <p v-if="isLoadingSpells" class="text-fg-muted">Loading spellbook...</p>
+        <p v-else-if="spellStore.characterSpells.length === 0" class="text-fg-subtle">
           No spells in spellbook yet.
         </p>
         <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-4">
@@ -220,16 +217,16 @@ onMounted(async () => {
         </div>
       </section>
 
-      <section class="rounded-2xl border-2 border-white p-6 text-white">
+      <section class="rounded-2xl border-2 border-border-strong p-6 text-fg">
         <h2 class="mb-2 text-xl">Campaigns</h2>
-        <p v-if="characterCampaigns.length === 0" class="text-neutral-300">
+        <p v-if="characterCampaigns.length === 0" class="text-fg-muted">
           Not assigned to any campaigns.
         </p>
         <ul v-else class="flex flex-wrap gap-2">
           <li v-for="campaign in characterCampaigns" :key="campaign.id">
             <RouterLink
               :to="{ name: 'campaignDetail', params: { id: campaign.id } }"
-              class="rounded-lg bg-purple-200 px-3 py-1 text-sm font-semibold text-purple-800 hover:bg-purple-300"
+              class="rounded-lg bg-accent-muted px-3 py-1 text-sm font-semibold text-accent hover:bg-accent-hover"
             >
               {{ campaign.title }}
             </RouterLink>
@@ -237,7 +234,7 @@ onMounted(async () => {
         </ul>
       </section>
 
-      <p class="text-sm text-neutral-400">
+      <p class="text-sm text-fg-subtle">
         Created {{ formatDateStr(activeCharacter.createdOn) }} · Updated
         {{ formatDateStr(activeCharacter.updatedOn) }}
       </p>
@@ -246,7 +243,7 @@ onMounted(async () => {
         <BaseButton variant="danger" @click="requestDelete">Delete Character</BaseButton>
       </div>
 
-      <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
     </template>
 
     <ConfirmationModal

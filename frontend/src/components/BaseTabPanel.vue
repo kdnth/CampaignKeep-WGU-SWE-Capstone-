@@ -24,7 +24,7 @@ watch(
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="flex flex-wrap gap-1 border-b border-neutral-600">
+    <div class="flex flex-wrap gap-1 border-b border-border">
       <button
         v-for="tab in tabs"
         :key="tab.id"
@@ -32,10 +32,10 @@ watch(
         class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors"
         :class="
           activeTab === tab.id
-            ? 'bg-purple-600 text-white'
+            ? 'bg-accent text-white'
             : tab.disabled
-              ? 'text-neutral-500 cursor-not-allowed'
-              : 'text-neutral-300 hover:text-white hover:bg-neutral-700'
+              ? 'text-fg-subtle cursor-not-allowed'
+              : 'text-fg-muted hover:text-fg hover:bg-surface-muted'
         "
         :disabled="tab.disabled"
         @click="!tab.disabled && (activeTab = tab.id)"

@@ -136,26 +136,26 @@ onMounted(loadSessionLogs)
         v-model="searchQuery"
         type="text"
         placeholder="Search by title..."
-        class="rounded-lg border-2 border-white bg-neutral-400 p-2 placeholder:text-neutral-700"
+        class="rounded-lg border-2 border-border-strong bg-input p-2 placeholder:text-placeholder"
       />
-      <select v-model="sortOrder" class="rounded-lg border-2 border-white bg-neutral-400 p-2">
+      <select v-model="sortOrder" class="rounded-lg border-2 border-border-strong bg-input p-2">
         <option value="newest">Newest first</option>
         <option value="oldest">Oldest first</option>
       </select>
       <BaseButton variant="primary" @click="openCreateModal">New Session Log</BaseButton>
     </div>
 
-    <p v-if="isLoading" class="text-neutral-400">Loading session logs...</p>
-    <p v-else-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
-    <p v-else-if="sessionLogs.length === 0" class="text-neutral-400">No session logs yet.</p>
-    <p v-else-if="filteredLogs.length === 0" class="text-neutral-400">
+    <p v-if="isLoading" class="text-fg-subtle">Loading session logs...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+    <p v-else-if="sessionLogs.length === 0" class="text-fg-subtle">No session logs yet.</p>
+    <p v-else-if="filteredLogs.length === 0" class="text-fg-subtle">
       No session logs match your search.
     </p>
 
-    <div v-else class="overflow-x-auto rounded-xl bg-white">
+    <div v-else class="overflow-x-auto rounded-xl bg-surface">
       <table class="w-full min-w-md text-left">
         <thead>
-          <tr class="border-b border-neutral-200 text-sm text-neutral-600">
+          <tr class="border-b border-border text-sm text-fg-muted">
             <th class="px-4 py-3 font-medium">Session Title</th>
             <th class="px-4 py-3 font-medium">Date</th>
             <th class="px-4 py-3 font-medium text-right">Actions</th>
@@ -165,18 +165,18 @@ onMounted(loadSessionLogs)
           <tr
             v-for="log in filteredLogs"
             :key="log.id"
-            class="border-b border-neutral-100 last:border-b-0"
+            class="border-b border-border last:border-b-0"
           >
             <td class="px-4 py-3">
               <button
                 type="button"
-                class="text-left font-medium text-black hover:text-purple-700"
+                class="text-left font-medium text-fg hover:text-accent-hover"
                 @click="openDetailModal(log.id)"
               >
                 {{ log.title.trim() || 'Untitled Session' }}
               </button>
             </td>
-            <td class="px-4 py-3 text-neutral-700">{{ formatDateStr(log.createdOn) }}</td>
+            <td class="px-4 py-3 text-fg-muted">{{ formatDateStr(log.createdOn) }}</td>
             <td class="px-4 py-3 text-right">
               <BaseButton variant="danger" @click="requestDelete(log.id)">Delete</BaseButton>
             </td>
@@ -198,7 +198,7 @@ onMounted(loadSessionLogs)
       @close="closeDetail"
     />
 
-    <p v-if="detailOpen && isLoadingDetail" class="text-neutral-400">Loading session log...</p>
+    <p v-if="detailOpen && isLoadingDetail" class="text-fg-subtle">Loading session log...</p>
 
     <ConfirmationModal
       v-if="pendingDeleteLogId"

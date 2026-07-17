@@ -18,14 +18,14 @@ withDefaults(
   <button
     :type="type"
     :disabled="disabled || loading"
-    class="w-fit py-2.5 px-8 rounded-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-colors hover:text-white hover:border-2 hover:border-white"
+    class="w-fit cursor-pointer rounded-lg px-8 py-2.5 transition-colors hover:border-2 hover:border-border-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
     :class="{
-      'hover:bg-neutral-400 bg-white text-black': variant === 'submit',
-      'hover:bg-purple-800 bg-purple-600 text-white': variant === 'primary',
-      'hover:bg-red-600 bg-white text-black': variant === 'cancel',
-      'hover:bg-red-800 bg-red-600 text-white': variant === 'danger',
-      'hover:bg-purple-600 bg-white text-black': variant === 'secondary',
-      'hover:bg-green-600 bg-white text-black': variant === 'agree',
+      'bg-surface text-fg hover:bg-surface-muted': variant === 'submit',
+      'bg-accent text-white hover:bg-accent-hover': variant === 'primary',
+      'bg-surface text-fg hover:bg-danger': variant === 'cancel',
+      'bg-danger text-white hover:bg-danger-hover': variant === 'danger',
+      'bg-surface text-fg hover:bg-accent': variant === 'secondary',
+      'bg-surface text-fg hover:bg-success': variant === 'agree',
     }"
   >
     <slot />

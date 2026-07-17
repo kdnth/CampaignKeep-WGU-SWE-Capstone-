@@ -48,10 +48,10 @@ async function handleSubmit() {
 
 <template>
   <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-neutral-900 p-6">
-        <h2 class="mb-2 text-xl font-semibold text-white">Choose Starting Equipment</h2>
-        <p class="mb-4 text-sm text-neutral-400">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+      <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-surface p-6">
+        <h2 class="mb-2 text-xl font-semibold text-fg">Choose Starting Equipment</h2>
+        <p class="mb-4 text-sm text-fg-subtle">
           Your character needs starting equipment before continuing.
         </p>
 
@@ -62,7 +62,7 @@ async function handleSubmit() {
           hide-navigation
         />
 
-        <p v-if="errorMessage" class="mt-4 text-red-400">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="mt-4 text-danger">{{ errorMessage }}</p>
 
         <div class="mt-4">
           <BaseButton

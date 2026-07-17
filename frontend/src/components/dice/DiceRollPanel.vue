@@ -120,10 +120,10 @@ async function handleRoll() {
 </script>
 ``
 <template>
-  <div class="space-y-6 rounded-2xl border-2 border-white p-6 text-white">
+  <div class="space-y-6 rounded-2xl border-2 border-border-strong p-6 text-fg">
     <div>
       <h2 class="text-xl font-semibold">Dice Roller</h2>
-      <p class="text-sm text-neutral-400">
+      <p class="text-sm text-fg-subtle">
         <template v-if="mode === 'player'">
           Optionally pick a skill. Only the linked ability modifier is added for now.
         </template>
@@ -133,11 +133,11 @@ async function handleRoll() {
 
     <div class="flex flex-wrap items-end gap-4">
       <div>
-        <label class="text-sm text-neutral-400" for="dice-type">Dice</label>
+        <label class="text-sm text-fg-subtle" for="dice-type">Dice</label>
         <select
           id="dice-type"
           v-model="diceType"
-          class="mt-1 block rounded-lg py-2 text-black"
+          class="bg-input mt-1 block rounded-lg py-2 text-fg"
           :disabled="isRolling"
           @change="onDiceTypeChange"
         >
@@ -146,25 +146,25 @@ async function handleRoll() {
       </div>
 
       <div>
-        <label class="text-sm text-neutral-400" for="dice-qty">Quantity</label>
+        <label class="text-sm text-fg-subtle" for="dice-qty">Quantity</label>
         <input
           id="dice-qty"
           v-model.number="quantity"
           type="number"
           min="1"
           max="10"
-          class="mt-1 block w-20 rounded-lg px-3 py-2 text-black"
+          class="bg-input mt-1 block w-20 rounded-lg px-3 py-2 text-fg"
           :disabled="quantityDisabled"
         />
       </div>
 
       <div>
-        <p class="text-sm text-neutral-400">Advantage</p>
+        <p class="text-sm text-fg-subtle">Advantage</p>
         <div class="mt-1 flex flex-wrap gap-2">
           <BaseButton
             variant="secondary"
             :disabled="!isD20 || isRolling"
-            :class="rollMode === 'normal' ? 'ring-4 ring-purple-400' : ''"
+            :class="rollMode === 'normal' ? 'ring-4 ring-accent' : ''"
             @click="rollMode = 'normal'"
           >
             Normal
@@ -172,7 +172,7 @@ async function handleRoll() {
           <BaseButton
             variant="secondary"
             :disabled="!isD20 || isRolling"
-            :class="rollMode === 'advantage' ? 'ring-4 ring-green-400' : ''"
+            :class="rollMode === 'advantage' ? 'ring-4 ring-success' : ''"
             @click="rollMode = 'advantage'"
           >
             Advantage
@@ -180,24 +180,24 @@ async function handleRoll() {
           <BaseButton
             variant="secondary"
             :disabled="!isD20 || isRolling"
-            :class="rollMode === 'disadvantage' ? 'ring-4 ring-red-400' : ''"
+            :class="rollMode === 'disadvantage' ? 'ring-4 ring-danger' : ''"
             @click="rollMode = 'disadvantage'"
           >
             Disadvantage
           </BaseButton>
         </div>
-        <p v-if="!isD20" class="mt-1 text-xs text-neutral-500">
+        <p v-if="!isD20" class="mt-1 text-xs text-fg-subtle">
           Advantage / disadvantage is only available on d20 rolls.
         </p>
       </div>
     </div>
 
     <div v-if="mode === 'player'" class="max-w-xs">
-      <label class="text-sm text-neutral-400" for="skill-select">Skill (optional)</label>
+      <label class="text-sm text-fg-subtle" for="skill-select">Skill (optional)</label>
       <select
         id="skill-select"
         v-model="selectedSkill"
-        class="mt-1 block w-full rounded-lg px-4 py-2 text-black"
+        class="bg-input mt-1 block w-full rounded-lg px-4 py-2 text-fg"
         :disabled="isRolling || !character"
       >
         <option value="">None</option>
@@ -205,7 +205,7 @@ async function handleRoll() {
           {{ skill.name }} ({{ abilityLabel(skill.ability) }})
         </option>
       </select>
-      <p v-if="selectedSkillOption && character" class="mt-1 text-xs text-neutral-400">
+      <p v-if="selectedSkillOption && character" class="mt-1 text-xs text-fg-subtle">
         {{ selectedSkillOption.name }} uses
         {{ abilityLabel(selectedSkillOption.ability) }}
         ({{ formatModifier(skillModifier) }}) proficiency not applied yet.
@@ -213,12 +213,12 @@ async function handleRoll() {
     </div>
 
     <div v-else class="max-w-xs">
-      <label class="text-sm text-neutral-400" for="custom-mod">Custom modifier</label>
+      <label class="text-sm text-fg-subtle" for="custom-mod">Custom modifier</label>
       <input
         id="custom-mod"
         v-model.number="customModifier"
         type="number"
-        class="mt-1 block w-28 rounded-lg px-3 py-2 text-black"
+        class="bg-input mt-1 block w-28 rounded-lg px-3 py-2 text-fg"
         :disabled="isRolling"
       />
     </div>
@@ -227,7 +227,7 @@ async function handleRoll() {
       Roll
     </BaseButton>
 
-    <div v-if="displayFaces.length" class="space-y-4 border-t border-neutral-700 pt-4">
+    <div v-if="displayFaces.length" class="space-y-4 border-t border-border pt-4">
       <div class="flex flex-wrap gap-4">
         <div
           v-for="(face, index) in displayFaces"
@@ -244,7 +244,7 @@ async function handleRoll() {
             v-if="outcome"
             class="text-xs"
             :class="
-              outcome.dice[index]?.kept ? 'text-neutral-300' : 'text-neutral-500 line-through'
+              outcome.dice[index]?.kept ? 'text-fg-muted' : 'text-fg-subtle line-through'
             "
           >
             {{ outcome.dice[index]?.value }}
@@ -254,15 +254,15 @@ async function handleRoll() {
 
       <div v-if="outcome && !isRolling" class="space-y-1 text-sm">
         <p v-if="outcome.skillName">
-          <span class="text-neutral-400">Skill:</span>
+          <span class="text-fg-subtle">Skill:</span>
           {{ outcome.skillName }}
           <span v-if="outcome.abilityKey">({{ abilityLabel(outcome.abilityKey) }})</span>
         </p>
-        <p v-if="outcome.mode !== 'normal'" class="capitalize text-neutral-300">
+        <p v-if="outcome.mode !== 'normal'" class="capitalize text-fg-muted">
           Rolled with {{ outcome.mode }}
         </p>
         <p>
-          <span class="text-neutral-400">Dice:</span>
+          <span class="text-fg-subtle">Dice:</span>
           {{ outcome.diceTotal }}
           <span v-if="outcome.modifier !== 0">
             {{ formatModifier(outcome.modifier) }} modifier
@@ -270,7 +270,7 @@ async function handleRoll() {
         </p>
         <p class="text-2xl font-semibold">Total: {{ outcome.total }}</p>
       </div>
-      <p v-else-if="isRolling" class="text-neutral-400">Rolling...</p>
+      <p v-else-if="isRolling" class="text-fg-subtle">Rolling...</p>
     </div>
   </div>
 </template>

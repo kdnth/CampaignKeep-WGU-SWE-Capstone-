@@ -131,8 +131,8 @@ watch(playerCharacter, async (character) => {
   <div class="flex w-full flex-col gap-6 p-8">
     <BackToLink page="campaigns" link-name="Campaigns" />
 
-    <p v-if="isLoading" class="text-neutral-300">Loading campaign...</p>
-    <p v-else-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+    <p v-if="isLoading" class="text-fg-muted">Loading campaign...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
     <template v-else-if="activeCampaign">
       <CampaignInfoHero :campaign="activeCampaign" />
@@ -147,8 +147,8 @@ watch(playerCharacter, async (character) => {
           @gold-updated="handleGoldUpdated"
         />
       </section>
-      <section v-else class="rounded-2xl border-2 border-dashed border-neutral-600 p-8 text-center">
-        <p class="mb-4 text-neutral-400">No character attached to this campaign.</p>
+      <section v-else class="rounded-2xl border-2 border-dashed border-border p-8 text-center">
+        <p class="mb-4 text-fg-subtle">No character attached to this campaign.</p>
         <div class="flex justify-center">
           <AddCampaignCharacterPanel :campaign-id="campaignId" character-type="pc" />
         </div>

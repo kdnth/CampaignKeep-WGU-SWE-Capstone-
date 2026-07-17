@@ -47,16 +47,16 @@ const abilities = [
 </script>
 
 <template>
-  <h2 class="text-4xl text-white my-4">Review</h2>
-  <div class="space-y-4 text-white border-2 border-white rounded-2xl p-8">
+  <h2 class="text-4xl text-fg my-4">Review</h2>
+  <div class="space-y-4 text-fg border-2 border-border-strong rounded-2xl p-8">
     <div class="space-y-1">
-      <p><span class="text-neutral-300">Name:</span> {{ form.name }}</p>
-      <p><span class="text-neutral-300">Race:</span> {{ raceName }}</p>
-      <p v-if="form.subraceId"><span class="text-neutral-300">Subrace:</span> {{ subraceName }}</p>
+      <p><span class="text-fg-muted">Name:</span> {{ form.name }}</p>
+      <p><span class="text-fg-muted">Race:</span> {{ raceName }}</p>
+      <p v-if="form.subraceId"><span class="text-fg-muted">Subrace:</span> {{ subraceName }}</p>
       <p v-if="form.backgroundId">
-        <span class="text-neutral-300">Background:</span> {{ backgroundName }}
+        <span class="text-fg-muted">Background:</span> {{ backgroundName }}
       </p>
-      <p><span class="text-neutral-300">Languages:</span> {{ languageNames }}</p>
+      <p><span class="text-fg-muted">Languages:</span> {{ languageNames }}</p>
     </div>
 
     <div class="space-y-1">
@@ -65,7 +65,7 @@ const abilities = [
       </p>
     </div>
 
-    <p v-if="error" class="text-red-400 text-sm">{{ error }}</p>
+    <p v-if="error" class="text-danger text-sm">{{ error }}</p>
   </div>
   <div class="flex justify-between pt-4">
     <BaseButton variant="cancel" :disabled="submitting" @click="$emit('back')">Back</BaseButton>

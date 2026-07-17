@@ -69,27 +69,27 @@ onMounted(loadNote)
 
 <template>
   <div
-    class="flex min-h-[calc(100vh-18rem)] flex-col rounded-2xl bg-white p-6 text-black shadow-sm"
+    class="flex min-h-[calc(100vh-18rem)] flex-col rounded-2xl bg-surface p-6 text-fg shadow-sm"
   >
-    <div class="mb-4 flex items-center justify-between gap-4 border-b border-neutral-200 pb-4">
+    <div class="mb-4 flex items-center justify-between gap-4 border-b border-border pb-4">
       <h2 class="text-xl font-semibold">{{ panelTitle }}</h2>
-      <span v-if="saveStatus === 'saved'" class="text-sm text-green-700">Saved</span>
+      <span v-if="saveStatus === 'saved'" class="text-sm text-success">Saved</span>
     </div>
 
-    <p v-if="isLoading" class="text-neutral-500">Loading note...</p>
+    <p v-if="isLoading" class="text-fg-subtle">Loading note...</p>
 
     <template v-else>
-      <p v-if="errorMessage" class="mb-4 text-red-600">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="mb-4 text-danger">{{ errorMessage }}</p>
 
       <textarea
         v-model="body"
         maxlength="10000"
-        class="min-h-[calc(100vh-26rem)] w-full flex-1 resize-none bg-white text-base leading-relaxed text-black placeholder:text-neutral-400 focus:outline-none border-0 focus:border-0"
+        class="min-h-[calc(100vh-26rem)] w-full flex-1 resize-none bg-surface text-base leading-relaxed text-fg placeholder:text-placeholder focus:outline-none border-0 focus:border-0"
         placeholder="Write your character notes here..."
       />
 
-      <div class="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4">
-        <span class="text-sm text-neutral-500">{{ body.length }} / 10000</span>
+      <div class="mt-4 flex items-center justify-between border-t border-border pt-4">
+        <span class="text-sm text-fg-subtle">{{ body.length }} / 10000</span>
         <BaseButton variant="primary" :loading="isSaving" @click="handleSave">Save</BaseButton>
       </div>
     </template>

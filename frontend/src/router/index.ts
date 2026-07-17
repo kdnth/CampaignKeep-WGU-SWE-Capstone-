@@ -23,6 +23,24 @@ const router = createRouter({
       meta: { requiresGuest: true },
     },
     {
+      path: '/forgot-password',
+      name: 'forgotPassword',
+      component: () => import('@/views/ForgotPasswordView.vue'),
+      meta: { requiresGuest: true },
+    },
+    {
+      path: '/reset-password',
+      name: 'resetPassword',
+      component: () => import('@/views/ResetPasswordView.vue'),
+      meta: { requiresGuest: true },
+    },
+    {
+      path: '/verify-email',
+      name: 'verifyEmail',
+      component: () => import('@/views/VerifyEmailView.vue'),
+      // No auth meta: link must work logged-in or logged-out
+    },
+    {
       path: '/campaigns',
       name: 'campaigns',
       component: () => import('@/views/CampaignListView.vue'),

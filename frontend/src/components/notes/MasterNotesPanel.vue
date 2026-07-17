@@ -142,11 +142,11 @@ onMounted(loadNotes)
         v-model="searchQuery"
         type="text"
         placeholder="Search by title..."
-        class="rounded-lg border-2 border-white bg-neutral-400 p-2 placeholder:text-neutral-700"
+        class="rounded-lg border-2 border-border-strong bg-input p-2 placeholder:text-placeholder"
       />
       <select
         v-model="sortOrder"
-        class="rounded-lg border-2 border-white bg-neutral-400 p-2"
+        class="rounded-lg border-2 border-border-strong bg-input p-2"
       >
         <option value="newest">Newest first</option>
         <option value="oldest">Oldest first</option>
@@ -154,10 +154,10 @@ onMounted(loadNotes)
       <BaseButton variant="primary" @click="openCreateModal">New Note</BaseButton>
     </div>
 
-    <p v-if="isLoading" class="text-neutral-400">Loading notes...</p>
-    <p v-else-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
-    <p v-else-if="masterNotes.length === 0" class="text-neutral-400">No notes yet.</p>
-    <p v-else-if="filteredNotes.length === 0" class="text-neutral-400">
+    <p v-if="isLoading" class="text-fg-subtle">Loading notes...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+    <p v-else-if="masterNotes.length === 0" class="text-fg-subtle">No notes yet.</p>
+    <p v-else-if="filteredNotes.length === 0" class="text-fg-subtle">
       No notes match your search.
     </p>
 

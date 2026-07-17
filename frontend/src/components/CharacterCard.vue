@@ -11,9 +11,9 @@ defineProps<{
 
 <template>
   <div
-    class="w-full h-64 grid grid-rows-5 bg-white cursor-pointer rounded-xl overflow-hidden transition-colors hover:border-4 hover:border-purple-600"
+    class="w-full h-64 grid grid-rows-5 bg-surface cursor-pointer rounded-xl overflow-hidden transition-colors hover:border-4 hover:border-accent"
   >
-    <div class="row-span-3 bg-purple-400 flex justify-center items-center">
+    <div class="row-span-3 bg-accent flex justify-center items-center">
       <CharacterAvatar :race-name="raceName" :class-name="className" size="md" />
     </div>
     <div class="justify-start row-span-2 p-2">
@@ -24,7 +24,7 @@ defineProps<{
           <span
             v-for="(campaign, index) in campaigns"
             :key="index"
-            class="inline-block max-w-32 truncate bg-purple-200 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded-lg"
+            class="inline-block max-w-32 truncate bg-accent-muted text-accent text-xs font-semibold px-2.5 py-0.5 rounded-lg"
             :title="campaign"
           >
             {{ campaign }}

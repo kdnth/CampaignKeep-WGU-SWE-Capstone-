@@ -76,12 +76,12 @@ function handleAction(event: Event) {
     <div class="spell-flip-inner h-full" :class="{ 'is-flipped': isFlipped }">
       <!-- Front -->
       <div
-        class="spell-flip-face flex h-full cursor-pointer flex-col justify-between rounded-2xl border-2 bg-neutral-900 p-4"
+        class="spell-flip-face flex h-full cursor-pointer flex-col justify-between rounded-2xl border-2 bg-surface p-4"
         :class="colors.border"
       >
         <div class="space-y-2">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="text-lg font-semibold leading-tight text-white">{{ spell.name }}</h3>
+            <h3 class="text-lg font-semibold leading-tight text-fg">{{ spell.name }}</h3>
             <span
               class="shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold text-white"
               :class="colors.badge"
@@ -90,58 +90,58 @@ function handleAction(event: Event) {
             </span>
           </div>
 
-          <p class="text-sm text-neutral-300">{{ levelAndComponents }}</p>
+          <p class="text-sm text-fg-muted">{{ levelAndComponents }}</p>
 
           <span
             v-if="castingTimeTag"
-            class="inline-block rounded-md bg-green-800 px-2 py-0.5 text-xs font-medium text-green-100"
+            class="inline-block rounded-md bg-success-muted px-2 py-0.5 text-xs font-medium text-success"
           >
             {{ castingTimeTag }}
           </span>
 
-          <div class="space-y-0.5 text-xs text-neutral-400">
+          <div class="space-y-0.5 text-xs text-fg-subtle">
             <p v-if="spell.concentration">Requires Concentration</p>
             <p v-if="spell.ritual">Ritual Spell</p>
           </div>
 
           <span
             v-if="mode === 'select' && isSelected"
-            class="inline-block rounded bg-white/20 px-2 py-0.5 text-xs text-white"
+            class="inline-block rounded bg-surface/20 px-2 py-0.5 text-xs text-fg"
           >
             Selected
           </span>
         </div>
 
-        <p class="text-center text-xs text-neutral-500">Click to flip</p>
+        <p class="text-center text-xs text-fg-subtle">Click to flip</p>
       </div>
 
       <!-- Back -->
       <div
-        class="spell-flip-face spell-flip-back flex h-full cursor-pointer flex-col rounded-2xl border-2 bg-neutral-900 p-4"
+        class="spell-flip-face spell-flip-back flex h-full cursor-pointer flex-col rounded-2xl border-2 bg-surface p-4"
         :class="colors.border"
       >
-        <div class="min-h-0 flex-1 space-y-2 overflow-y-auto text-sm text-neutral-100">
-          <h3 class="font-semibold text-white">{{ spell.name }}</h3>
+        <div class="min-h-0 flex-1 space-y-2 overflow-y-auto text-sm text-fg">
+          <h3 class="font-semibold text-fg">{{ spell.name }}</h3>
 
           <template v-if="hasDetailFields">
             <p v-if="detailSpell.rangeDisplay">
-              <span class="text-neutral-400">Range:</span> {{ detailSpell.rangeDisplay }}
+              <span class="text-fg-subtle">Range:</span> {{ detailSpell.rangeDisplay }}
             </p>
             <p v-if="detailSpell.duration">
-              <span class="text-neutral-400">Duration:</span> {{ detailSpell.duration }}
+              <span class="text-fg-subtle">Duration:</span> {{ detailSpell.duration }}
             </p>
             <p v-if="detailSpell.materialDesc">
-              <span class="text-neutral-400">Material:</span> {{ detailSpell.materialDesc }}
+              <span class="text-fg-subtle">Material:</span> {{ detailSpell.materialDesc }}
             </p>
             <p v-if="detailSpell.description" class="whitespace-pre-line">
               {{ detailSpell.description }}
             </p>
-            <p v-if="detailSpell.higherLevel" class="whitespace-pre-line text-neutral-300">
-              <span class="text-neutral-400">At Higher Levels:</span>
+            <p v-if="detailSpell.higherLevel" class="whitespace-pre-line text-fg-muted">
+              <span class="text-fg-subtle">At Higher Levels:</span>
               {{ detailSpell.higherLevel }}
             </p>
           </template>
-          <p v-else class="text-neutral-400">Loading details...</p>
+          <p v-else class="text-fg-subtle">Loading details...</p>
         </div>
 
         <div v-if="mode !== 'browse'" class="mt-3 shrink-0" @click.stop>

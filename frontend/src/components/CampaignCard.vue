@@ -21,7 +21,7 @@ addIcons(BiPersonFill, GiCrenelCrown)
 
 <template>
   <div
-    class="w-full h-64 flex flex-col bg-white p-4 cursor-pointer rounded-xl overflow-hidden transition-colors hover:border-4 hover:border-purple-600"
+    class="w-full h-64 flex flex-col bg-surface p-4 cursor-pointer rounded-xl overflow-hidden transition-colors hover:border-4 hover:border-accent"
   >
     <div class="justify-start grid grid-cols-5">
       <div class="col-span-4 min-w-0 flex flex-col">
@@ -36,13 +36,13 @@ addIcons(BiPersonFill, GiCrenelCrown)
         <OhVueIcon
           v-if="role === 'master'"
           name="gi-crenel-crown"
-          class="shrink-0 text-neutral-700"
+          class="shrink-0 text-fg-muted"
           scale="1.5"
         />
         <OhVueIcon
           v-if="role === 'player'"
           name="bi-person-fill"
-          class="shrink-0 text-neutral-700"
+          class="shrink-0 text-fg-muted"
           scale="1.5"
         />
       </div>
@@ -50,8 +50,8 @@ addIcons(BiPersonFill, GiCrenelCrown)
 
     <!-- DESC -->
 
-    <div class="mt-auto border-4 border-stone-200 rounded-xl overflow-hidden py-4 px-2">
-      <p class="text-sm font-light text-black overflow-hidden line-clamp-3">
+    <div class="mt-auto border-4 border-border rounded-xl overflow-hidden py-4 px-2">
+      <p class="text-sm font-light text-fg overflow-hidden line-clamp-3">
         {{ description?.trim() || 'No description' }}
       </p>
     </div>

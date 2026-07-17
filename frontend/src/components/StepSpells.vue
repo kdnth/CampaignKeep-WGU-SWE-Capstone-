@@ -64,8 +64,8 @@ function updateSpellIds(ids: number[]) {
 </script>
 
 <template>
-  <h2 class="my-4 text-4xl text-white">Choose Spells</h2>
-  <p class="mb-4 text-neutral-300">
+  <h2 class="my-4 text-4xl text-fg">Choose Spells</h2>
+  <p class="mb-4 text-fg-muted">
     <template v-if="isWizard">
       Select {{ quotas?.cantrips }} cantrips and {{ quotas?.levelOne }} level-1 spells for your
       spellbook.

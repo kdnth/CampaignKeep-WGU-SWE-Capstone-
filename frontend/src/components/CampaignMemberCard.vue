@@ -49,28 +49,28 @@ const canChangeRole = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3">
+  <div class="flex items-center justify-between bg-surface rounded-lg px-4 py-3">
     <div class="flex items-center gap-3">
       <OhVueIcon
         :name="member.role === 'master' ? 'gi-crenel-crown' : 'bi-person-fill'"
-        class="shrink-0 text-neutral-700"
+        class="shrink-0 text-fg-muted"
         scale="1.2"
       />
-      <span class="text-black">{{ member.username }}</span>
-      <span class="text-xs uppercase text-neutral-500">{{ member.role }}</span>
+      <span class="text-fg">{{ member.username }}</span>
+      <span class="text-xs uppercase text-fg-subtle">{{ member.role }}</span>
     </div>
 
     <div class="flex gap-2">
       <button
         v-if="canChangeRole"
-        class="text-sm text-purple-700 hover:underline"
+        class="text-sm text-accent hover:underline"
         @click="emit('changeRole', member.userId, member.role === 'master' ? 'player' : 'master')"
       >
         {{ member.role === 'master' ? 'Demote' : 'Promote' }}
       </button>
       <button
         v-if="canRemove"
-        class="text-sm text-red-600 hover:underline"
+        class="text-sm text-danger hover:underline"
         @click="emit('remove', member.userId)"
       >
         {{ isSelf ? 'Leave' : 'Remove' }}

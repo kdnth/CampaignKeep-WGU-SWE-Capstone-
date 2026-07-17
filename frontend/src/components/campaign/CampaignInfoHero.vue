@@ -12,27 +12,27 @@ addIcons(GiCrenelCrown, BiPersonFill)
 </script>
 
 <template>
-  <section class="relative rounded-2xl border-2 border-white bg-neutral-900 p-6 text-white">
+  <section class="relative rounded-2xl border-2 border-border-strong bg-surface p-6 text-fg">
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div class="min-w-0 flex-1">
         <div class="mb-2 flex items-center gap-2">
           <OhVueIcon
             :name="campaign.callerRole === 'master' ? 'gi-crenel-crown' : 'bi-person-fill'"
-            class="shrink-0 text-purple-400"
+            class="shrink-0 text-accent"
             scale="1.2"
           />
-          <span class="text-sm uppercase tracking-wide text-purple-400">
+          <span class="text-sm uppercase tracking-wide text-accent">
             {{ campaign.callerRole === 'master' ? 'Game Master' : 'Player' }}
           </span>
         </div>
         <h1 class="text-3xl font-semibold">{{ campaign.title }}</h1>
-        <p class="mt-1 text-sm text-neutral-400">
+        <p class="mt-1 text-sm text-fg-subtle">
           Created {{ formatDateStr(campaign.createdOn) }}
           <span v-if="campaign.finishedOn">
             · Finished {{ formatDateStr(campaign.finishedOn) }}
           </span>
         </p>
-        <p v-if="campaign.description" class="mt-4 text-neutral-300">
+        <p v-if="campaign.description" class="mt-4 text-fg-muted">
           {{ campaign.description }}
         </p>
       </div>
@@ -40,7 +40,7 @@ addIcons(GiCrenelCrown, BiPersonFill)
 
     <p
       v-if="campaign.finishedOn"
-      class="pointer-events-none absolute inset-0 flex items-center justify-center text-6xl font-extralight text-neutral-500/40"
+      class="pointer-events-none absolute inset-0 flex items-center justify-center text-6xl font-extralight text-fg-subtle/40"
     >
       FINISHED
     </p>

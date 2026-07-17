@@ -108,18 +108,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-6 rounded-2xl border-2 border-white p-6 text-white">
-    <p v-if="isLoading" class="text-neutral-400">Loading equipment...</p>
-    <p v-else-if="errorMessage" class="text-red-400">{{ errorMessage }}</p>
+  <div class="space-y-6 rounded-2xl border-2 border-border-strong p-6 text-fg">
+    <p v-if="isLoading" class="text-fg-subtle">Loading equipment...</p>
+    <p v-else-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
     <template v-else-if="inventory">
       <div class="flex flex-wrap gap-6 text-sm">
         <p>
-          <span class="text-neutral-400">Weight:</span>
+          <span class="text-fg-subtle">Weight:</span>
           {{ inventory.totalWeight }} / {{ inventory.carryingCapacity }} lb.
         </p>
         <p>
-          <span class="text-neutral-400">AC:</span>
+          <span class="text-fg-subtle">AC:</span>
           {{ inventory.armorClass }}
         </p>
       </div>
@@ -130,9 +130,9 @@ onMounted(async () => {
           <div
             v-for="slot in slots"
             :key="slot.id"
-            class="rounded-lg border border-neutral-600 p-3"
+            class="rounded-lg border border-border p-3"
           >
-            <p class="text-xs uppercase text-neutral-400">{{ slot.label }}</p>
+            <p class="text-xs uppercase text-fg-subtle">{{ slot.label }}</p>
             <template v-if="itemInSlot(slot.id)">
               <p class="font-medium">{{ itemInSlot(slot.id)!.item.name }}</p>
               <BaseButton
@@ -145,28 +145,28 @@ onMounted(async () => {
                 Unequip
               </BaseButton>
             </template>
-            <p v-else class="text-neutral-500">Empty</p>
+            <p v-else class="text-fg-subtle">Empty</p>
           </div>
         </div>
       </div>
 
       <div>
         <h3 class="mb-3 text-lg font-medium">Inventory</h3>
-        <p v-if="unequippedItems().length === 0" class="text-neutral-400">No items in inventory.</p>
+        <p v-if="unequippedItems().length === 0" class="text-fg-subtle">No items in inventory.</p>
         <div v-else class="space-y-3">
           <div
             v-for="entry in unequippedItems()"
             :key="entry.inventoryItemId"
-            class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-neutral-600 p-3"
+            class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3"
           >
             <div>
               <p class="font-medium">
                 {{ entry.item.name }}
-                <span v-if="isStackable(entry) && entry.quantity > 1" class="text-neutral-400">
+                <span v-if="isStackable(entry) && entry.quantity > 1" class="text-fg-subtle">
                   x{{ entry.quantity }}
                 </span>
               </p>
-              <p class="text-xs text-neutral-400">
+              <p class="text-xs text-fg-subtle">
                 {{ entry.item.itemType }} · {{ (entry.item.weight ?? 0) * entry.quantity }} lb.
               </p>
             </div>
@@ -192,7 +192,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <p v-if="actionError" class="text-red-400">{{ actionError }}</p>
+      <p v-if="actionError" class="text-danger">{{ actionError }}</p>
     </template>
   </div>
 </template>

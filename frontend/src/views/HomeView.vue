@@ -8,7 +8,7 @@ const authStore = useAuthStore()
 
 <template>
   <div class="px-8 pb-40">
-    <h1 class="text-6xl text-white py-24">Welcome, {{ authStore.username }}.</h1>
+    <h1 class="text-6xl text-fg py-24">Welcome, {{ authStore.username }}.</h1>
 
     <div class="w-full overflow-hidden my-8 py-4">
       <CompactCampaignList />

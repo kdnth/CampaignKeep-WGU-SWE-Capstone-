@@ -27,12 +27,12 @@ const canProceed = () => name.value.trim().length > 0 && raceId.value > 0
 </script>
 
 <template>
-  <h2 class="text-4xl text-white my-4">Basic NPC Information</h2>
-  <div class="space-y-4 text-white border-2 border-white rounded-2xl p-8">
+  <h2 class="text-4xl text-fg my-4">Basic NPC Information</h2>
+  <div class="space-y-4 text-fg border-2 border-border-strong rounded-2xl p-8">
     <div class="space-y-1">
       <label for="npc-name">Name</label>
       <input
-        class="text-black rounded-lg mx-2 cursor-auto"
+        class="bg-input text-fg rounded-lg mx-2 cursor-auto"
         id="npc-name"
         v-model="name"
         placeholder="NPC Name"
@@ -41,7 +41,7 @@ const canProceed = () => name.value.trim().length > 0 && raceId.value > 0
 
     <div class="space-y-1">
       <label for="npc-race">Race</label>
-      <select class="rounded-lg mx-2 text-neutral-800" id="npc-race" v-model.number="raceId">
+      <select class="bg-input rounded-lg mx-2 text-fg" id="npc-race" v-model.number="raceId">
         <option :value="0" disabled>Select a race</option>
         <option v-for="race in raceStore.races" :key="race.id" :value="race.id">
           {{ race.name }}

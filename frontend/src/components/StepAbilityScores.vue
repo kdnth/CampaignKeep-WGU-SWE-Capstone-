@@ -39,9 +39,9 @@ const allRolled = () => abilities.every((a) => rolled[a])
 </script>
 
 <template>
-  <h2 class="text-4xl text-white my-4">Ability Scores</h2>
-  <div class="space-y-4 text-white border-2 border-white rounded-2xl p-8">
-    <p class="text-sm text-neutral-300">Roll each ability. Reroll as many times as you like.</p>
+  <h2 class="text-4xl text-fg my-4">Ability Scores</h2>
+  <div class="space-y-4 text-fg border-2 border-border-strong rounded-2xl p-8">
+    <p class="text-sm text-fg-muted">Roll each ability. Reroll as many times as you like.</p>
 
     <div v-for="ability in abilities" :key="ability" class="flex items-center justify-between">
       <span class="capitalize w-32">{{ ability }}</span>

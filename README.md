@@ -2,9 +2,6 @@
 
 D&D 5e campaign and character organizer for players and game masters. Vue 3 frontend, Spring Boot API, PostgreSQL.
 
-**Repository:** [d424-software-engineering-capstone on GitLab](https://gitlab.com/wgu-gitlab-environment/student-repos/kthrow2/d424-software-engineering-capstone)
-**Walkthrough Video:** [Panopto WGU Capstone](https://wgu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4555e555-a423-4175-bcbd-b4880000118e#)
-
 ---
 
 ## Documentation
